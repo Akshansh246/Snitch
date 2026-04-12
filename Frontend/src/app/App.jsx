@@ -1,11 +1,13 @@
 import React from 'react'
+import { RouterProvider } from 'react-router'
 import './App.css'
+import { routes } from './app.routes.jsx'
 
 const App = () => {
     return (
-        <div>
-            hleoo
-        </div>
+        <>
+        <RouterProvider router={routes}/>
+        </>
     )
 }
 

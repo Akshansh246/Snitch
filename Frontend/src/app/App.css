@@ -1,1 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
 @import 'tailwindcss';
+
+@theme {
+  --color-snitch-primary: #D4D4D8;
+  --color-snitch-secondary: #3F3F46;
+  --color-snitch-tertiary: #71717A;
+  --color-snitch-neutral: #09090B;
+
+  --color-snitch-bg: #09090B;
+  --color-snitch-surface: #18181B;
+  --color-snitch-card: #27272A;
+
+  --color-snitch-text: #D4D4D8;
+  --color-snitch-text-muted: #A1A1AA;
+  --color-snitch-text-dim: #71717A;
+
+  --color-snitch-border: #3F3F46;
+
+
+  --color-snitch-accent: #FFFFFF;
+  --color-snitch-accent-text: #09090B;
+  --color-snitch-accent-hover: #E4E4E7;
+
+
+  --color-snitch-danger: #EF4444;
+  --color-snitch-success: #22C55E;
+
+  --color-snitch-btn: #3F3F46;
+  --color-snitch-btn-hover: #52525B;
+
+  --color-snitch-input: #18181B;
+  --color-snitch-input-border: #3F3F46;
+
+  --font-snitch-sans: "Inter", sans-serif;
+  --font-snitch-display: "Playfair Display", serif;
+}
+
+*{
+    font-family: var(--font-sans);
+}
+
+
+main{
+    background-image: url(https://images.unsplash.com/photo-1612744234160-9ff642a02d19?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+    background-position: center;
+    background-size: cover;
+    /* filter: brightness(50%); */
+}
+
+.btn {
+    background: linear-gradient(
+        135deg,
+        #ffffff,
+        #3F3F46
+    );
+    color: #09090B;
+    border-radius: 8px;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: linear-gradient(
+        135deg,
+        #E4E4E7,
+        #A1A1AA,
+        #27272A
+    );
+}
