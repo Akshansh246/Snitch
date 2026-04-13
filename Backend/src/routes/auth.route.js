@@ -1,6 +1,6 @@
 import express from 'express';
-import { validateRegisterUser } from '../validators/auth.validator.js';
-import { register } from '../controllers/auth.controller.js';
+import { validateLoginUser, validateRegisterUser } from '../validators/auth.validator.js';
+import { login, register } from '../controllers/auth.controller.js';
 
 const authRouter = express.Router()
 
@@ -17,7 +17,7 @@ authRouter.post('/register', validateRegisterUser, register)
  * @description used for logging in the users
  * @access public
  */
-
+authRouter.post('/login', validateLoginUser, login)
 
 
 

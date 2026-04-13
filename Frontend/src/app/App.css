@@ -40,12 +40,14 @@
     font-family: var(--font-sans);
 }
 
+html{
+    scroll-behavior: smooth;
+}
 
 main{
     background-image: url(https://images.unsplash.com/photo-1612744234160-9ff642a02d19?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
     background-position: center;
     background-size: cover;
-    /* filter: brightness(50%); */
 }
 
 .btn {
@@ -69,4 +71,20 @@ main{
         #A1A1AA,
         #27272A
     );
+}
+
+.containers{
+    transition: 3s all ease-in-out;
+}
+
+::-webkit-scrollbar{
+    display: none;
+}
+
+.image:hover {
+  filter: none;
+}
+
+.containers:hover .image:not(:hover) {
+  filter: blur(4px) grayscale(50%);
 }

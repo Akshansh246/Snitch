@@ -1,8 +1,23 @@
-import React from 'react'
-import { NavLink, Link } from 'react-router'
-import Footer from '../components/Footer'
+import React, { useState } from 'react'
+import { NavLink, Link, useNavigate } from 'react-router'
+import useAuth from '../hooks/useAuth';
 
 const Login = () => {
+
+    const { handleLogin } = useAuth()
+    const navigate = useNavigate()
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    async function handleSubmit(e) {
+        e.preventDefault()
+
+        await handleLogin({email, password})
+
+        navigate('/')
+    }
+
     return (
         <main className='w-screen h-screen text-white flex items-center justify-center'>
             <div className='w-full flex justify-between p-5 absolute left-0 top-0'>
@@ -17,10 +32,14 @@ const Login = () => {
                     <p className='text-snitch-text-dim text-sm'>Enter your details to access Snitch.</p>
                 </div>
 
-                <form className='uppercase flex flex-col gap-4 w-full'>
+                <form onSubmit={handleSubmit} className='uppercase flex flex-col gap-4 w-full'>
                     <div className='flex flex-col gap-1'>
                         <label className='text-xs' htmlFor="email">Email</label>
                         <input 
+                        value={email}
+                        onInput={(e)=>{
+                            setEmail(e.target.value)
+                        }}
                         className='bg-snitch-card p-3 rounded w-full'
                         type="email" 
                         id="email" 
@@ -31,6 +50,10 @@ const Login = () => {
                     <div className='flex flex-col gap-1'>
                         <label className='text-xs' htmlFor="password">Password</label>
                         <input 
+                        value={password}
+                        onInput={(e)=>{
+                            setPassword(e.target.value)
+                        }}
                         className='bg-snitch-card p-3 rounded w-full'
                         type="password" 
                         id="password" 
@@ -50,8 +73,6 @@ const Login = () => {
                 <p className='text-sm'>New to Snitch? <Link className='underline' to={'/register'}>Create Account</Link></p>
             </div>
 
-
-            <Footer/>
         </main>
     )
 }

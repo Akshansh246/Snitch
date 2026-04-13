@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
-import Footer from '../components/Footer'
-import {NavLink, Link} from 'react-router'
+import {NavLink, Link, useNavigate} from 'react-router'
+import useAuth from '../hooks/useAuth'
 
 const Register = () => {
+
+    const {handleRegister} = useAuth()
+    const navigate = useNavigate()
 
     const [fullname, setFullname] = useState('');
     const [email, setEmail] = useState('');
@@ -12,6 +15,14 @@ const Register = () => {
 
     async function handleSubmit(e) {
         e.preventDefault()
+        await handleRegister({
+            email,
+            contact,
+            password,
+            fullname,
+            isSeller
+        })
+        navigate('/')
     }
 
     return (
@@ -101,8 +112,6 @@ const Register = () => {
                 <p className='text-sm'>Already have an Account? <Link className='underline' to={'/login'}>Sign in</Link></p>
             </div>
 
-
-            <Footer/>
         </main>
     )
 }

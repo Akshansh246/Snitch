@@ -2,7 +2,7 @@ import React from 'react'
 
 const Footer = () => {
     return (
-        <footer className='w-screen bg-snitch-bg flex items-center justify-between py-2 px-4 absolute bottom-0 left-0'>
+        <footer className='w-screen bg-snitch-bg/40 backdrop-blur-2xl flex items-center justify-between py-2 px-4 absolute bottom-0 left-0'>
             <h2 className='font-snitch-display font-bold text-2xl'>Snitch</h2>
 
             <div className='hidden md:flex gap-4 text-snitch-accent text-sm'>
