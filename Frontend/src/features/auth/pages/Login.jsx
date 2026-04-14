@@ -25,14 +25,14 @@ const Login = () => {
                 <NavLink className={'font-snitch-display font-light'} to={'/home'}>BACK TO STORE</NavLink>
             </div>
 
-            <div className='w-full md:w-120 bg-snitch-bg/40 backdrop-blur-2xl rounded-lg px-12 py-8 flex flex-col gap-6 items-center justify-center text-snitch-text'>
+            <div className='w-full md:w-120 bg-snitch-bg/40 backdrop-blur-2xl rounded-lg px-12 py-8 flex flex-col gap-5 items-center justify-center text-snitch-text'>
                 
                 <div className='flex flex-col items-center'>
                     <h1 className='text-4xl font-snitch-display font-extralight'>Welcome Back</h1>
                     <p className='text-snitch-text-dim text-sm'>Enter your details to access Snitch.</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className='uppercase flex flex-col gap-4 w-full'>
+                <form onSubmit={handleSubmit} className='uppercase flex flex-col gap-5 w-full'>
                     <div className='flex flex-col gap-1'>
                         <label className='text-xs' htmlFor="email">Email</label>
                         <input 
@@ -63,12 +63,12 @@ const Login = () => {
 
                     <button className='p-3 w-full btn' type='submit'>Log in</button>
                 </form>
-
-                <p className='text-sm'>Or continue with</p>
-                <div className='bg-snitch-card w-full gap-2 rounded p-3 text-sm flex items-center justify-center cursor-pointer'>
+                
+                <p>or</p>
+                <a href={'/api/auth/google'} className='bg-white text-black w-full gap-2 rounded p-3 text-sm flex items-center justify-center cursor-pointer'>
                     <img className='w-6' src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/3840px-Google_%22G%22_logo.svg.png" alt="" />
-                    Google
-                </div>
+                    Continue with Google
+                </a>
 
                 <p className='text-sm'>New to Snitch? <Link className='underline' to={'/register'}>Create Account</Link></p>
             </div>

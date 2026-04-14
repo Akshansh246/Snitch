@@ -72,7 +72,7 @@ const Register = () => {
                             className='bg-snitch-card p-3 rounded w-full'
                             type="text" 
                             id="contact" 
-                            placeholder='+91 ...'
+                            placeholder='+91 0000 00 0000'
                             />
                         </div>
                         <div className='flex flex-col gap-1'>
@@ -102,12 +102,12 @@ const Register = () => {
 
                     <button className='p-3 w-full btn' type='submit'>Register Account</button>
                 </form>
-
-                <p className='text-sm'>Or continue with</p>
-                <div className='bg-snitch-card w-full gap-2 rounded p-3 text-sm flex items-center justify-center cursor-pointer'>
+                
+                <p>or</p>
+                <a href={'/api/auth/google'} className='bg-white text-black w-full gap-2 rounded p-3 text-sm flex items-center justify-center cursor-pointer'>
                     <img className='w-6' src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/3840px-Google_%22G%22_logo.svg.png" alt="" />
-                    Google
-                </div>
+                    Continue with Google
+                </a>
 
                 <p className='text-sm'>Already have an Account? <Link className='underline' to={'/login'}>Sign in</Link></p>
             </div>
