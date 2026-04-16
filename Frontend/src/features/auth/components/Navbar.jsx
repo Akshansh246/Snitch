@@ -4,7 +4,7 @@ import { NavLink } from 'react-router'
 const Navbar = () => {
     return (
         <nav className='bg-snitch-bg/50 backdrop-blur-2xl z-50 w-screen fixed left-0 top-0 text-white flex items-center justify-between px-5 py-3'>
-            <h2 className='text-2xl font-snitch-display items-center gap-1 flex'>
+            <h2 className='text-xl uppercase tracking-[8px] font-light font-snitch-display items-center gap-1 flex'>
                 <img className='w-6' src="https://ik.imagekit.io/devakshu/img.png" alt="" />
                 Snitch
             </h2>
