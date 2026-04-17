@@ -2,7 +2,7 @@ import productModel from "../models/product.model.js"
 import { uploadFile } from "../services/storage.service.js"
 
 export async function createProduct(req, res) {
-    const {title, description, priceAmount, priceCurrency} = req.body
+    const {title, description, priceAmount, priceCurrency, type ='published'} = req.body
     const seller = req.user
 
     const images = await Promise.all(req.files.map(async (file)=>{
@@ -12,6 +12,8 @@ export async function createProduct(req, res) {
         })
     }))
 
+    const isDraft = type === "draft";
+
     const product = await productModel.create({
         title,
         description,
@@ -20,7 +22,11 @@ export async function createProduct(req, res) {
             currency: priceCurrency || 'INR'
         },
         images,
-        seller: seller._id
+        seller: seller._id,
+        type,
+        expiresAt: isDraft 
+            ? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+            : null
     })
 
     res.status(201).json({

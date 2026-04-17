@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import Header from '../components/Header'
 import { useProduct } from '../hooks/useProduct';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 const CreateProduct = () => {
 
     const { handleCreateProduct } = useProduct()
+    const navigate = useNavigate()
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -14,6 +17,7 @@ const CreateProduct = () => {
     const [files, setFiles] = useState([]);   // actual files
     const [dragActive, setDragActive] = useState(false);
     const [error, setError] = useState('');
+    const [submitType, setSubmitType] = useState('published');
 
     const MAX_IMAGES = 7;
 
@@ -75,24 +79,32 @@ const CreateProduct = () => {
         setFiles(prev => prev.filter((_, i) => i !== idx));
     };
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e,) {
         e.preventDefault();
 
         const formData = new FormData();
 
         formData.append("title", title);
         formData.append("description", description);
-        formData.append("priceAmount", Number(priceAmount)); // ✅ important
+        formData.append("priceAmount", Number(priceAmount));
         formData.append("priceCurrency", priceCurrency);
 
-        // 👇 use REAL files
+        if (submitType === "draft") {
+            formData.append("type", "draft");
+        }
+
         files.forEach(file => {
             formData.append("images", file);
         });
 
         await handleCreateProduct(formData);
 
-        alert("Product Created Successfully");
+        if(submitType === 'draft'){
+            toast('Product added to Drafts')
+        }else{
+            toast('Product Created Successfully!')
+        }
+        navigate('/')
     }
 
     return (
@@ -238,8 +250,20 @@ const CreateProduct = () => {
                     </div>
                 </div>
 
-                <div className='w-full flex justify-end'>
-                    <button className='btn px-8 py-4' type='submit'>Publish to Snitch</button>
+                <div className='w-full flex gap-5 justify-end'>
+                    <button 
+                    onClick={()=>{setSubmitType('draft')}}
+                    className='px-8 py-4 uppercase cursor-pointer hover:border border-snitch-border rounded-lg'
+                    >
+                        Save as Draft
+                    </button>
+                    <button 
+                    onClick={()=>{setSubmitType('published')}}
+                    className='btn px-8 py-4' 
+                    type='submit'
+                    >
+                        Publish to Snitch
+                    </button>
                 </div>
             </form>
         </div>

@@ -32,8 +32,19 @@ const productSchema = new mongoose.Schema({
                 required:true
             },
         }
-    ]
+    ],
+    type:{
+        type:String,
+        default: 'published',
+        enum: ['published', 'draft']
+    },
+    expiresAt: {
+        type: Date,
+        default: null
+    }
 }, { timestamps: true })
+
+productSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const productModel = mongoose.model('product', productSchema)
 
