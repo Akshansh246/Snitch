@@ -17,3 +17,9 @@ export async function getSellerProducts() {
 
     return response.data
 }
+
+export async function getSellerDrafts() {
+    const response = await api.get('/seller/drafts')
+
+    return response.data
+}

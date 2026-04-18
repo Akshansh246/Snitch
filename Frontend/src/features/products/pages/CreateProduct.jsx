@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import Header from '../components/Header'
 import { useProduct } from '../hooks/useProduct';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
+import SellerHeader from '../components/SellerHeader';
 
 const CreateProduct = () => {
 
@@ -104,12 +104,12 @@ const CreateProduct = () => {
         }else{
             toast('Product Created Successfully!')
         }
-        navigate('/')
+        navigate('/seller/dashboard')
     }
 
     return (
         <div className='bg-snitch-bg w-screen flex justify-center text-white py-20 px-5 '>
-            <Header/>
+            <SellerHeader/>
             <form onSubmit={handleSubmit} className='w-220 flex flex-col gap-15 font-light'>
                 <div className='flex flex-col gap-2'>
                     <h1 className='font-snitch-display text-4xl font-light'>Create New Product</h1>

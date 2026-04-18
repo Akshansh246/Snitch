@@ -39,11 +39,29 @@ export async function createProduct(req, res) {
 export  async function getSellerProducts(req, res) {
     const seller = req.user
 
-    const products = await productModel.find({ seller: seller._id })
+    const products = await productModel.find({ 
+        seller: seller._id,
+    })
 
 
     res.status(200).json({
         message:"Products fetched successfully.",
+        success:true,
+        products
+    })
+}
+
+export  async function getSellerDrafts(req, res) {
+    const seller = req.user
+
+    const products = await productModel.find({ 
+        seller: seller._id,
+        type:'draft'
+    })
+
+
+    res.status(200).json({
+        message:"Drafts fetched successfully.",
         success:true,
         products
     })
