@@ -13,9 +13,13 @@ const Login = () => {
     async function handleSubmit(e) {
         e.preventDefault()
 
-        await handleLogin({email, password})
+        const user = await handleLogin({email, password})
 
-        navigate('/')
+        if(user.role === 'buyer'){
+            navigate('/')
+        }else if(user.role === 'seller'){
+            navigate('/seller/dashboard')
+        }
     }
 
     return (

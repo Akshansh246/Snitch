@@ -8,11 +8,12 @@ import CreateProduct from "../features/products/pages/CreateProduct";
 import Dashboard from "../features/products/pages/Dashboard";
 import SellerInventory from "../features/products/pages/SellerInventory";
 import Drafts from "../features/products/pages/Drafts";
+import Protected from "../features/auth/components/Protected";
 
 export const routes = createBrowserRouter([
     {
         path:'/',
-        element:<h1>Helloo</h1>,
+        element:<Protected><h1>Helloo</h1></Protected>,
     },
     {
         path:'/register',
@@ -31,19 +32,19 @@ export const routes = createBrowserRouter([
         children:[
             {
                 path:'/seller/create-product',
-                element: <CreateProduct/>
+                element: <Protected role="seller"><CreateProduct/></Protected>
             },
             {
                 path:'/seller/dashboard',
-                element: <Dashboard/>
+                element: <Protected role="seller"><Dashboard/></Protected>
             },
             {
                 path:'/seller/all-products',
-                element: <SellerInventory/>
+                element: <Protected role="seller"><SellerInventory/></Protected>
             },
             {
                 path: '/seller/drafts',
-                element: <Drafts/>
+                element: <Protected role="seller"><Drafts/></Protected>
             }
         ]
     },
