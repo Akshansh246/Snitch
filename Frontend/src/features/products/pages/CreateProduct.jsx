@@ -15,6 +15,12 @@ const CreateProduct = () => {
     const [priceCurrency, setPriceCurrency] = useState('INR');
     const [images, setImages] = useState([]); // preview
     const [files, setFiles] = useState([]);   // actual files
+    
+    const [stock, setStock] = useState(0);
+    const [colorName, setColorName] = useState('');
+    const [colorSwatch, setColorSwatch] = useState('#000000');
+    const [sizes, setSizes] = useState([]);
+
     const [dragActive, setDragActive] = useState(false);
     const [error, setError] = useState('');
     const [submitType, setSubmitType] = useState('published');
@@ -79,7 +85,18 @@ const CreateProduct = () => {
         setFiles(prev => prev.filter((_, i) => i !== idx));
     };
 
-    async function handleSubmit(e,) {
+    function handleSizes(size){
+        // Only add size if it doesn't already exist
+        if (!sizes.includes(size)) {
+            let temp = [...sizes]
+            temp.push(size)
+            setSizes(temp)
+        }
+    }
+
+    console.log(sizes)
+
+    async function handleSubmit(e) {
         e.preventDefault();
 
         const formData = new FormData();
@@ -88,6 +105,10 @@ const CreateProduct = () => {
         formData.append("description", description);
         formData.append("priceAmount", Number(priceAmount));
         formData.append("priceCurrency", priceCurrency);
+        formData.append("colorName", colorName)
+        formData.append("colorSwatch", colorSwatch)
+        formData.append("stock", stock)
+        formData.append('sizes', sizes)
 
         if (submitType === "draft") {
             formData.append("type", "draft");
@@ -155,6 +176,18 @@ const CreateProduct = () => {
                         <p className='text-sm text-snitch-text-muted'>Set a price that reflects the artisanal value and rarity of the item.</p>
                     </div>
                     <div className='md:w-2/3 flex gap-2'>
+                        <div className='flex flex-col gap-3 w-1/3'>
+                            <label className='uppercase text-sm' htmlFor="stock">Stock</label>
+                            <input 
+                            value={stock}
+                            onInput={(e)=>{setStock(Number(e.target.value))}}
+                            className='px-4 py-5'
+                            type="text" 
+                            id="stock" 
+                            placeholder='0.00' 
+                            name='stock'
+                            />
+                        </div>
                         <div className='flex flex-col gap-3 w-full'>
                             <label className='uppercase text-sm' htmlFor="priceAmount">Price Amount</label>
                             <input 
@@ -182,6 +215,96 @@ const CreateProduct = () => {
                                 <option value="JPR">JPR</option>
                                 <option value="GBP">GBP</option>
                             </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='w-full md:flex gap-5'>
+                    <div className='md:w-1/3 flex flex-col gap-2 mb-5'>
+                        <h4 className='uppercase tracking-[5px] font-light'>Color Definition</h4>
+                        <p className='text-sm text-snitch-text-muted'>Specify the exact hue of your creation for precise curation.</p>
+                    </div>
+                    <div className='md:w-2/3 flex gap-2'>
+                        <div className='flex flex-col gap-3 w-1/2'>
+                            <label className='uppercase text-sm' htmlFor="colorName">Color Name</label>
+                            <input 
+                            value={colorName}
+                            onInput={(e)=>{setColorName(e.target.value)}}
+                            className='px-4 py-5'
+                            type="text" 
+                            id="colorName" 
+                            placeholder='e.g Obsidian Black' 
+                            name='colorName'
+                            />
+                        </div>
+                        <div className='flex flex-col gap-3 w-1/2'>
+                            <label className='uppercase text-sm' htmlFor="colorSwatch">Color Swatch</label>
+                            <div className='flex gap-4 bg-snitch-input px-4 py-3 rounded border-b border-white'>
+                                <input 
+                                value={colorSwatch}
+                                onInput={(e)=>{setColorSwatch(e.target.value)}}
+                                className='w-11 h-10 born'
+                                type="color" 
+                                id="colorSwatch" 
+                                placeholder='e.g Obsidian Black' 
+                                name='colorSwatch'
+                                />
+                                <input type="text" 
+                                value={colorSwatch}
+                                onInput={(e)=>{setColorSwatch(e.target.value)}}
+                                className='w-full born'
+                                placeholder='#000000'
+                                />
+                            </div>
+                        </div>  
+                    </div>
+                </div>
+
+                <div className='w-full md:flex gap-5'>
+                    <div className='md:w-1/3 flex flex-col gap-2 mb-5'>
+                        <h4 className='uppercase tracking-[5px] font-light'>Available Sizes</h4>
+                        <p className='text-sm text-snitch-text-muted'>Select the dimensions available for this piece.</p>
+                    </div>
+                    <div className='md:w-2/3 flex items-center justify-between gap-2'>
+                        <div 
+                        onClick={()=>{handleSizes('46')}}
+                        className={`border border-white rounded px-5 py-3 h-fit cursor-pointer hover:bg-snitch-input transition-all ${sizes.includes('46') ? 'opacity-30 cursor-not-allowed' : ''}`}>
+                            <p>46</p>
+                        </div>
+                        <div 
+                        onClick={()=>{handleSizes('48')}}
+                        className={`border border-white rounded px-5 py-3 h-fit cursor-pointer hover:bg-snitch-input transition-all ${sizes.includes('48') ? 'opacity-30 cursor-not-allowed' : ''}`}>
+                            <p>48</p>
+                        </div>
+                        <div 
+                        onClick={()=>{handleSizes('50')}}
+                        className={`border border-white rounded px-5 py-3 h-fit cursor-pointer hover:bg-snitch-input transition-all ${sizes.includes('50') ? 'opacity-30 cursor-not-allowed' : ''}`}>
+                            <p>50</p>
+                        </div>
+                        <div 
+                        onClick={()=>{handleSizes('52')}}
+                        className={`border border-white rounded px-5 py-3 h-fit cursor-pointer hover:bg-snitch-input transition-all ${sizes.includes('52') ? 'opacity-30 cursor-not-allowed' : ''}`}>
+                            <p>52</p>
+                        </div>
+                        <div 
+                        onClick={()=>{handleSizes('S')}}
+                        className={`border border-white rounded px-5 py-3 h-fit cursor-pointer hover:bg-snitch-input transition-all ${sizes.includes('S') ? 'opacity-30 cursor-not-allowed' : ''}`}>
+                            <p>S</p>
+                        </div>
+                        <div 
+                        onClick={()=>{handleSizes('M')}}
+                        className={`border border-white rounded px-5 py-3 h-fit cursor-pointer hover:bg-snitch-input transition-all ${sizes.includes('M') ? 'opacity-30 cursor-not-allowed' : ''}`}>
+                            <p>M</p>
+                        </div>
+                        <div 
+                        onClick={()=>{handleSizes('L')}}
+                        className={`border border-white rounded px-5 py-3 h-fit cursor-pointer hover:bg-snitch-input transition-all ${sizes.includes('L') ? 'opacity-30 cursor-not-allowed' : ''}`}>
+                            <p>L</p>
+                        </div>
+                        <div 
+                        onClick={()=>{handleSizes('XL')}}
+                        className={`border border-white rounded px-5 py-3 h-fit cursor-pointer hover:bg-snitch-input transition-all ${sizes.includes('XL') ? 'opacity-30 cursor-not-allowed' : ''}`}>
+                            <p>XL</p>
                         </div>
                     </div>
                 </div>

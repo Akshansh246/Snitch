@@ -33,6 +33,25 @@ const productSchema = new mongoose.Schema({
             },
         }
     ],
+    stock:{
+        type:Number,
+        required:true
+    },
+    color:{
+        name:{
+            type:String,
+            required:true
+        },
+        swatch:{
+            type:String,
+            required:true
+        }
+    },
+    sizes:{
+        type:[String],
+        default: [],
+        required: true
+    },
     type:{
         type:String,
         default: 'published',

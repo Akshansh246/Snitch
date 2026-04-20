@@ -9,7 +9,8 @@ const Dashboard = () => {
     
     const {handleGetSellerProducts, handleGetSellerDrafts} = useProduct()
     const [drafts, setDrafts] = useState([]);
-    const [totalPrice, settotalPrice] = useState();
+    const [totalPrice, settotalPrice] = useState(0);
+    const [totalStocks, settotalStocks] = useState(0);
     const sellerProducts = useSelector(state => state.product.sellerProducts)
 
     async function getDrafts() {
@@ -25,6 +26,15 @@ const Dashboard = () => {
         settotalPrice(totalPrice)
     }
 
+    function getTotalStock(){
+        let totalStock = 0
+        for(let prod of sellerProducts){
+            totalStock += prod.stock
+        } 
+
+        settotalStocks(totalStock)
+    }
+
 
     useEffect(()=>{
         handleGetSellerProducts()
@@ -33,6 +43,7 @@ const Dashboard = () => {
 
     useEffect(()=>{
         getTotalPrice()
+        getTotalStock()
     },[handleGetSellerProducts])
 
 
@@ -72,10 +83,10 @@ const Dashboard = () => {
 
                     <div className='bg-snitch-surface w-43 lg:w-55 p-5 flex flex-col gap-3 rounded'>
                         <div className='flex justify-between text-snitch-text-muted text-sm'>
-                            <h4 className='uppercase'>Rating</h4>
+                            <h4 className='uppercase'>Stocks Left</h4>
                             <svg className='w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"></path></svg>
                         </div>
-                        <p className='text-4xl text-snitch-success'>4.9</p>
+                        <p className='text-4xl text-snitch-success'>{totalStocks}</p>
                     </div>
                 </div>
 

@@ -2,7 +2,7 @@ import productModel from "../models/product.model.js"
 import { uploadFile } from "../services/storage.service.js"
 
 export async function createProduct(req, res) {
-    const {title, description, priceAmount, priceCurrency, type ='published'} = req.body
+    const {title, description, priceAmount, priceCurrency, type ='published', colorName, colorSwatch, stock, sizes} = req.body
     const seller = req.user
 
     const images = await Promise.all(req.files.map(async (file)=>{
@@ -24,6 +24,12 @@ export async function createProduct(req, res) {
         images,
         seller: seller._id,
         type,
+        stock: stock,
+        color:{
+            name: colorName,
+            swatch: colorSwatch
+        },
+        sizes: sizes,
         expiresAt: isDraft 
             ? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
             : null
@@ -74,5 +80,24 @@ export async function getAllProducts(req, res) {
         message:"Products fetched successfully.",
         success:true,
         products
+    })
+}
+
+export async function getProductDetails(req, res) {
+    const { id } = req.params
+
+    const product = await productModel.findById(id).populate('seller','fullname email contact')
+
+    if(!product){
+        return res.status(400).json({
+            message: 'Product not found',
+            success:false
+        })
+    }
+
+    return res.status(200).json({
+        message: 'Product found successfully',
+        success: true,
+        product
     })
 }

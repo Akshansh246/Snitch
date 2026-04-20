@@ -121,3 +121,7 @@ select {
     color: var(--color-snitch-primary);
     font-weight: 500;
 }
+
+.born{
+    border: none;
+}

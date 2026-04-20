@@ -3,11 +3,13 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useProduct } from '../hooks/useProduct'
 import Navbar from '../../auth/components/Navbar'
+import { useNavigate } from 'react-router'
 
 const HomePage = () => {
     
     const { handleGetAllProducts } = useProduct()
     const products = useSelector(state => state.product.products)
+    const navigate = useNavigate()
 
     function convertCurrency(name){
         switch(name){
@@ -42,7 +44,7 @@ const HomePage = () => {
             </div>
             <div className='flex flex-wrap gap-4'>
                 {products.map((product, idx) => (
-                    <div key={idx} className='bg-snitch-surface m-auto w-36 md:w-60 rounded overflow-hidden hover:scale-105 transition-all'>
+                    <div onClick={() => {navigate(`/product/${product._id}`)}} key={idx} className='bg-snitch-surface m-auto w-36 md:w-60 rounded overflow-hidden hover:scale-105 transition-all'>
                         <img className='w-full h-40 md:h-70 object-cover' src={product.images[0].url} alt="" />
                         <div className='p-3 flex justify-between'>
                             <p className='text-sm font-extralight'>{product.title}</p>
