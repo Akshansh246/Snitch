@@ -1,6 +1,6 @@
 import express from 'express';
 import { validateLoginUser, validateRegisterUser } from '../validators/auth.validator.js';
-import { getMe, googleCallback, login, register } from '../controllers/auth.controller.js';
+import { getMe, googleCallback, login, logout, register } from '../controllers/auth.controller.js';
 import passport from 'passport';
 import { config } from '../config/config.js';
 import { authenticateUser } from '../middlewares/auth.middleware.js';
@@ -45,6 +45,14 @@ authRouter.get('/google/callback',
  * @access private
  */
 authRouter.get('/get-me', authenticateUser, getMe)
+
+
+/**
+ * @route /api/auth/logout
+ * @description logouts the user clear the cookie
+ * @access private
+ */
+authRouter.post('/logout', logout)
 
 
 export default authRouter

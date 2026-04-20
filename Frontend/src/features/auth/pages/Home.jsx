@@ -1,8 +1,10 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import { Link } from 'react-router'
+import { useSelector } from 'react-redux'
 
 const Home = () => {
+    const user = useSelector(state => state.auth.user)
     return (
         <div className='bg-snitch-bg text-white w-screen'>
             <Navbar/>
@@ -14,8 +16,12 @@ const Home = () => {
                     <h1 className='capitalize text-2xl lg:text-7xl font-bold font-snitch-display'>Shadows <span className='font-light italic lg:-mr-4'>of</span> Substance</h1>
                     <p className='w-2/3 text-sm text-center'>A study in stillness. <i>Snitch</i> craft garments that exist at the intersection of architectural precision and the fluid nature of the human form.</p>
                     <div className='flex-col flex lg:flex-row items-center gap-4 justify-center mt-4'>
-                        <Link to={'/login'} className='btn px-4 py-2'>Explore Collection</Link>
-                        <Link to={'/register'} className='bg-snitch-bg/60 backdrop-blur-2xl px-4 py-2 rounded-lg uppercase font-bold cursor-pointer'>Create Account</Link>
+                        <Link to={'/'} className='btn px-4 py-2'>Explore Collection</Link>
+                        {(user) ? 
+                            ""
+                        :
+                            <Link to={'/register'} className='bg-snitch-bg/60 backdrop-blur-2xl px-4 py-2 rounded-lg uppercase font-bold cursor-pointer'>Create Account</Link>
+                        }
                     </div>
     
                     <div className='text-center mt-15'>

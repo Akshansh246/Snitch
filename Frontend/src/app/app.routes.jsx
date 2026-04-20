@@ -9,11 +9,12 @@ import Dashboard from "../features/products/pages/Dashboard";
 import SellerInventory from "../features/products/pages/SellerInventory";
 import Drafts from "../features/products/pages/Drafts";
 import Protected from "../features/auth/components/Protected";
+import HomePage from "../features/products/pages/HomePage";
 
 export const routes = createBrowserRouter([
     {
         path:'/',
-        element:<Protected><h1>Helloo</h1></Protected>,
+        element:<HomePage/>,
     },
     {
         path:'/register',

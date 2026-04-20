@@ -41,6 +41,7 @@
 html{
     scroll-behavior: smooth;
     font-family: var(--font-snitch-sans);
+    background-color: var(--color-snitch-bg);
 }
 
 main{

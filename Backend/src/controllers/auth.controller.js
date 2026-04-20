@@ -126,3 +126,12 @@ export const getMe = async (req, res) => {
         }
     })
 }
+
+export async function logout(req, res) {
+    res.clearCookie('token')
+
+    res.status(200).json({
+        message:"Logout Successfull",
+        success:true,
+    })
+}

@@ -66,3 +66,13 @@ export  async function getSellerDrafts(req, res) {
         products
     })
 }
+
+export async function getAllProducts(req, res) {
+    const products = await productModel.find({ type:'published' })
+
+    return res.status(200).json({
+        message:"Products fetched successfully.",
+        success:true,
+        products
+    })
+}

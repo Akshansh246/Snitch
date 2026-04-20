@@ -23,3 +23,9 @@ export async function getSellerDrafts() {
 
     return response.data
 }
+
+export async function getAllProducts() {
+    const reponse = await api.get('/')
+
+    return reponse.data
+}
