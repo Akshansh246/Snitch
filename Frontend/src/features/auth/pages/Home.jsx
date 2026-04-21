@@ -10,7 +10,8 @@ const Home = () => {
             <Navbar/>
 
             <div className='w-screen h-screen relative'>
-                <img className='w-screen h-full object-cover' src="https://images.unsplash.com/photo-1567442543701-9c08909d22d5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
+                {/* <img className='w-screen h-full object-cover' src="https://ik.imagekit.io/devakshu/Snitch/Gemini_Generated_Image_gx774ogx774ogx77.png" alt="" /> */}
+                <video className='w-full h-full object-cover' muted autoPlay loop src="https://ik.imagekit.io/devakshu/Snitch/9760432-uhd_4096_2160_25fps.mp4"></video>
                 <div className='absolute w-full left-0 flex flex-col gap-4 items-center bottom-0 font-light'>
                     <p className='text-xs uppercase'>The Ak24 Narrative</p>
                     <h1 className='capitalize text-2xl lg:text-7xl font-bold font-snitch-display'>Shadows <span className='font-light italic lg:-mr-4'>of</span> Substance</h1>

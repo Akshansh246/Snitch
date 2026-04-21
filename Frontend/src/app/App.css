@@ -33,7 +33,7 @@
   --color-snitch-input: #18181B;
   --color-snitch-input-border: #3F3F46;
 
-  --font-snitch-sans: "Inter", sans-serif;
+  --font-snitch-sans: "Manrope", sans-serif;
   --font-snitch-display: "Bodoni Moda", serif;
 }
 
@@ -44,11 +44,7 @@ html{
     background-color: var(--color-snitch-bg);
 }
 
-main{
-    background-image: url(https://images.unsplash.com/photo-1612744234160-9ff642a02d19?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
-    background-position: center;
-    background-size: cover;
-}
+
 
 .btn {
     background: linear-gradient(
@@ -62,7 +58,21 @@ main{
     letter-spacing: 2px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: 1s all ease-in-out;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.bg-img{
+    height: 100vh;
+    width: 100vw;
+    object-fit: cover;
+    object-position: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    filter: brightness(0.2) grayscale(100%);
 }
 
 .btn:hover {
@@ -72,7 +82,7 @@ main{
         #A1A1AA,
         #27272A
     );
-    scale: 1.02;
+    scale: 1.05;
 }
 
 .containers{

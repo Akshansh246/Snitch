@@ -14,7 +14,7 @@ import ProductDetails from "../features/products/pages/ProductDetails";
 
 export const routes = createBrowserRouter([
     {
-        path:'/',
+        path:'/home',
         element:<HomePage/>,
     },
     {
@@ -26,7 +26,7 @@ export const routes = createBrowserRouter([
         element:<Login/>
     },
     {
-        path:'/home',
+        path:'/',
         element:<Home/>
     },
     {
