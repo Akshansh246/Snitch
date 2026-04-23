@@ -17,7 +17,7 @@ const Home = () => {
                     <h1 className='capitalize text-2xl lg:text-7xl font-bold font-snitch-display'>Shadows <span className='font-light italic lg:-mr-4'>of</span> Substance</h1>
                     <p className='w-2/3 text-sm text-center'>A study in stillness. <i>Snitch</i> craft garments that exist at the intersection of architectural precision and the fluid nature of the human form.</p>
                     <div className='flex-col flex lg:flex-row items-center gap-4 justify-center mt-4'>
-                        <Link to={'/'} className='btn px-4 py-2'>Explore Collection</Link>
+                        <Link to={'/home'} className='btn px-4 py-2'>Explore Collection</Link>
                         {(user) ? 
                             ""
                         :

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useProduct } from '../hooks/useProduct'
 import { useSelector } from 'react-redux'
-import {Link} from 'react-router'
+import {Link, useNavigate} from 'react-router'
 import SellerHeader from '../components/SellerHeader'
 
 const Dashboard = () => {
@@ -12,6 +12,7 @@ const Dashboard = () => {
     const [totalPrice, settotalPrice] = useState(0);
     const [totalStocks, settotalStocks] = useState(0);
     const sellerProducts = useSelector(state => state.product.sellerProducts)
+    const navigate = useNavigate()
 
     async function getDrafts() {
         setDrafts( await handleGetSellerDrafts())
@@ -130,7 +131,7 @@ const Dashboard = () => {
                     </div>
                     <div className='flex justify-between flex-wrap w-full'>
                         {sellerProducts.slice(-4).map((product, idx) =>(
-                            <div key={idx} className='w-45 md:w-55 flex flex-col gap-2 mt-5'>
+                            <div key={idx} className='w-45 md:w-55 flex flex-col gap-2 mt-5 transition-all hover:scale-105' onClick={()=>{navigate(`/seller/product/${product._id}`)}}>
                                 <div className='relative'>
                                     <img className='w-full h-65 object-cover rounded object-top' src={product.images[0].url} alt="" />
                                     <p className='absolute text-xs uppercase right-2 top-2 bg-snitch-card/60 backdrop-blur-lg px-2 py-1 rounded'>{product.type}</p>                                

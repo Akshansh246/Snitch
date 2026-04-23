@@ -13,6 +13,7 @@ const ProductDetails = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovering, setIsHovering] = useState(false);
     const [discountData, setDiscountData] = useState({ finalAmt: 0, discount: 0 });
+    const [selectedVariant, setSelectedVariant] = useState(null);
     const { handleGetProductById } = useProduct()
 
     async function getProduct() {
@@ -37,16 +38,29 @@ const ProductDetails = () => {
         return true;
     }
 
+    const activeImages = selectedVariant && selectedVariant.images && selectedVariant.images.length > 0
+        ? selectedVariant.images
+        : (product.images || []);
+
     const handlePrevImage = () => {
         setCurrentImageIndex((prevIndex) =>
-            prevIndex === 0 ? product.images.length - 1 : prevIndex - 1
+            prevIndex === 0 ? activeImages.length - 1 : prevIndex - 1
         );
     };
 
     const handleNextImage = () => {
         setCurrentImageIndex((prevIndex) =>
-            prevIndex === product.images.length - 1 ? 0 : prevIndex + 1
+            prevIndex === activeImages.length - 1 ? 0 : prevIndex + 1
         );
+    };
+
+    const handleVariantSelect = (variant) => {
+        if (selectedVariant && selectedVariant._id === variant._id) {
+            setSelectedVariant(null);
+        } else {
+            setSelectedVariant(variant);
+        }
+        setCurrentImageIndex(0);
     };
 
     function applyDiscount(amount){
@@ -62,12 +76,16 @@ const ProductDetails = () => {
         getProduct()
     },[productId])
 
+    const activePrice = (selectedVariant && selectedVariant.price && selectedVariant.price.amount)
+        ? selectedVariant.price
+        : product.price;
+
     useEffect(() => {
-        if (product.price && product.price.amount) {
-            const discount = applyDiscount(product.price.amount);
+        if (activePrice && activePrice.amount) {
+            const discount = applyDiscount(activePrice.amount);
             setDiscountData(discount);
         }
-    }, [product.price?.amount])
+    }, [activePrice?.amount])
 
     if(isEmpty(product)){
         return <Loading/>
@@ -76,16 +94,16 @@ const ProductDetails = () => {
     console.log(product)
 
     return (
-        <div className='text-white h-screen'>
+        <div className='text-white lg:h-screen'>
             <Navbar/>
-            <div className='w-full h-full py-15 px-2 lg:px-10 font-extralight'>
+            <div className='w-full h-full pt-15 pb-5 px-2 lg:px-10 font-extralight'>
                 <div className='flex flex-col lg:flex-row h-full'>
                     <div className='w-full lg:w-3/5 h-full flex items-center justify-center relative bg-snitch-surface/60'>
-                        {product.images && product.images.length > 0 && (
+                        {activeImages.length > 0 && (
                             <>
-                                {product.images.length > 1 && (
+                                {activeImages.length > 1 && (
                                     <div className='h-full py-4 px-3 flex flex-col gap-3 overflow-y-auto'>
-                                        {product.images.map((img, idx) => (
+                                        {activeImages.map((img, idx) => (
                                             <div
                                                 key={idx}
                                                 onClick={() => setCurrentImageIndex(idx)}
@@ -108,11 +126,11 @@ const ProductDetails = () => {
                                 <div className='flex-1 h-full flex items-center justify-center relative' onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
                                     <img 
                                         className='w-full h-full object-contain' 
-                                        src={product.images[currentImageIndex].url} 
+                                        src={activeImages[currentImageIndex]?.url} 
                                         alt={`Product ${currentImageIndex}`}
                                     />
                                     
-                                    {product.images.length > 1 && isHovering && (
+                                    {activeImages.length > 1 && isHovering && (
                                         <>
                                             <button
                                                 onClick={handlePrevImage}
@@ -128,7 +146,7 @@ const ProductDetails = () => {
                                             </button>
                                             
                                             <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 px-4 py-2 rounded'>
-                                                {currentImageIndex + 1} / {product.images.length}
+                                                {currentImageIndex + 1} / {activeImages.length}
                                             </div>
                                         </>
                                     )}
@@ -144,12 +162,12 @@ const ProductDetails = () => {
                             <div className='flex items-center justify-between'>
                                 <div className='flex gap-3 items-center'>
                                     <div className='flex gap-1 text-white text-2xl'>
-                                        <p>{convertCurrency(product.price.currency)}</p>
+                                        <p>{convertCurrency(activePrice?.currency)}</p>
                                         <p>{discountData.finalAmt}</p>
                                     </div>
                                     <strike className='flex gap-1'>
-                                        <p>{convertCurrency(product.price.currency)}</p>
-                                        <p className=''>{product.price.amount}</p>
+                                        <p>{convertCurrency(activePrice?.currency)}</p>
+                                        <p className=''>{activePrice?.amount}</p>
                                     </strike>
                                     <p className='text-xl text-snitch-success'>({discountData.discount}% OFF)</p>
                                 </div>
@@ -157,6 +175,7 @@ const ProductDetails = () => {
                             </div>
                         </div>
                         <div className='flex flex-col gap-5'>
+                            {/* Base color — always shown */}
                             <div className='text-snitch-text-muted flex-col flex gap-2'>
                                 <h3 className='text-sm text-white tracking-widest'>COLOR</h3>
                                 <div className='flex flex-col gap-1 px-3 w-fit items-center'>
@@ -164,6 +183,81 @@ const ProductDetails = () => {
                                     <p className='text-xs'>{product.color.name}</p>
                                 </div>
                             </div>
+
+                            {/* Variants */}
+                            {product.variants && product.variants.length > 0 && (
+                                <div className='flex flex-col gap-3'>
+                                    <h3 className='text-sm text-white tracking-widest'>VARIANTS</h3>
+                                    <div className='flex flex-wrap gap-3'>
+                                        {product.variants.map((variant) => {
+                                            const isSelected = selectedVariant && selectedVariant._id === variant._id;
+                                            const thumbUrl = variant.images && variant.images.length > 0
+                                                ? variant.images[0].url
+                                                : null;
+                                            const attrs = variant.attributes
+                                                ? Object.entries(variant.attributes)
+                                                : [];
+                                            return (
+                                                <button
+                                                    key={variant._id}
+                                                    onClick={() => handleVariantSelect(variant)}
+                                                    className={`flex flex-col gap-2 p-2 rounded-xl border transition-all duration-200 w-28 text-left cursor-pointer ${
+                                                        isSelected
+                                                            ? 'border-white bg-snitch-surface/80 scale-105 shadow-lg shadow-black/40'
+                                                            : 'border-snitch-border/40 bg-snitch-surface/20 hover:border-snitch-border hover:bg-snitch-surface/50'
+                                                    }`}
+                                                >
+                                                    {thumbUrl ? (
+                                                        <div className='relative w-full aspect-square rounded-lg overflow-hidden'>
+                                                            <img
+                                                                src={thumbUrl}
+                                                                alt='Variant thumbnail'
+                                                                className='w-full h-full object-cover'
+                                                            />
+                                                            {isSelected && (
+                                                                <div className='absolute inset-0 bg-white/10 flex items-center justify-center'>
+                                                                    <svg className='w-5 h-5 text-white drop-shadow' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'>
+                                                                        <path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/>
+                                                                    </svg>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <div className='w-full aspect-square rounded-lg bg-snitch-surface/60 flex items-center justify-center'>
+                                                            <svg className='w-6 h-6 text-snitch-text-muted' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'>
+                                                                <path d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-1 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/>
+                                                            </svg>
+                                                        </div>
+                                                    )}
+                                                    <div className='flex flex-col gap-0.5 px-0.5'>
+                                                        {attrs.length > 0 ? (
+                                                            <div className='flex gap-1'>
+                                                                {attrs.map(([key, val]) => (
+                                                                <span key={key} className='text-[10px] text-snitch-text-muted leading-tight'>
+                                                                    <span className='text-white'>{val}</span>
+                                                                </span>
+                                                            ))}
+                                                            </div>
+                                                        ) : (
+                                                            <p className='text-[10px] text-snitch-text-muted'>Variant</p>
+                                                        )}
+                                                        {variant.stock !== undefined && (
+                                                            <p className={`text-[10px] mt-0.5 ${
+                                                                variant.stock > 0 ? 'text-snitch-success' : 'text-red-400'
+                                                            }`}>
+                                                                {variant.stock > 0 ? `${variant.stock} in stock` : 'Out of stock'}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    {selectedVariant && (
+                                        <p className='text-xs text-snitch-text-muted italic'>Click the selected variant again to deselect</p>
+                                    )}
+                                </div>
+                            )}
                             <div className='text-sm flex flex-col gap-1'>
                                 <h3 className='tracking-widest'>SIZE</h3>
                                 <div className='flex gap-2 '>
