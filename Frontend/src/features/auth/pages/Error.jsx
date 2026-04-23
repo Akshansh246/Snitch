@@ -5,6 +5,8 @@ import { Link } from 'react-router'
 const Error = () => {
     return (
         <main className='h-screen w-screen flex items-center justify-center text-white'>
+            <img className='bg-img' src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhO6FIuB1gc8CL9Zsxr1poumW_uFlWQqR5qGr_4Kdn3hQtlUo1XzQuZKRFyTp0IHMYdZ9mUjxzDS7ShOp3S5xMjKV0UYoK03QvMqGcNToeKcfHEMNFUo8y5wc2YXH8XZ1GLvLSSDxE-CECzcEHjdcVq3slIx2tHZqBodi1W7708o_i5eDb1ItgWrZpxXIG9TUNQItDn71fS3ZslKrU2vZeW8NnZUMwkTKe1boPI45NfoWl_Cw1QiCOH5DIIrCJErELBvOBht839w" alt="" />
+
             <div className='flex flex-col gap-7 rounded items-center bg-snitch-surface p-5'>
                 <div className='relative px-8'>
                     <img className='w-60 rounded' src="https://images.unsplash.com/photo-1674930406583-bde79f7f2fc9?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />

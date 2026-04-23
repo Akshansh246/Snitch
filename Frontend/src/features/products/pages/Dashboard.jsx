@@ -29,7 +29,9 @@ const Dashboard = () => {
     function getTotalStock(){
         let totalStock = 0
         for(let prod of sellerProducts){
-            totalStock += prod.stock
+            prod.variants.forEach(variant => {
+                totalStock += variant.stock
+            });
         } 
 
         settotalStocks(totalStock)

@@ -16,7 +16,6 @@ const CreateProduct = () => {
     const [images, setImages] = useState([]); // preview
     const [files, setFiles] = useState([]);   // actual files
     
-    const [stock, setStock] = useState(0);
     const [colorName, setColorName] = useState('');
     const [colorSwatch, setColorSwatch] = useState('#000000');
     const [sizes, setSizes] = useState([]);
@@ -107,7 +106,6 @@ const CreateProduct = () => {
         formData.append("priceCurrency", priceCurrency);
         formData.append("colorName", colorName)
         formData.append("colorSwatch", colorSwatch)
-        formData.append("stock", stock)
         formData.append('sizes', sizes)
 
         if (submitType === "draft") {
@@ -176,18 +174,6 @@ const CreateProduct = () => {
                         <p className='text-sm text-snitch-text-muted'>Set a price that reflects the artisanal value and rarity of the item.</p>
                     </div>
                     <div className='md:w-2/3 flex gap-2'>
-                        <div className='flex flex-col gap-3 w-1/3'>
-                            <label className='uppercase text-sm' htmlFor="stock">Stock</label>
-                            <input 
-                            value={stock}
-                            onInput={(e)=>{setStock(Number(e.target.value))}}
-                            className='px-4 py-5'
-                            type="text" 
-                            id="stock" 
-                            placeholder='0.00' 
-                            name='stock'
-                            />
-                        </div>
                         <div className='flex flex-col gap-3 w-full'>
                             <label className='uppercase text-sm' htmlFor="priceAmount">Price Amount</label>
                             <input 

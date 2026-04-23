@@ -17,7 +17,7 @@ const SellerHeader = () => {
     }
 
     return (
-        <nav className='fixed left-0 top-0 w-screen p-5 bg-snitch-bg/40 backdrop-blur-lg text-white flex justify-between'>
+        <nav className='fixed left-0 top-0 z-5 w-screen p-5 bg-snitch-bg/40 backdrop-blur-lg text-white flex justify-between'>
             <h2 className='tracking-[8px] uppercase'>Snitch Seller</h2>
 
             <div className='hidden md:flex uppercase gap-5 text-sm items-center text-snitch-text-muted font-extralight'>

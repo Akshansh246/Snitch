@@ -33,10 +33,6 @@ const productSchema = new mongoose.Schema({
             },
         }
     ],
-    stock:{
-        type:Number,
-        required:true
-    },
     color:{
         name:{
             type:String,
@@ -60,7 +56,38 @@ const productSchema = new mongoose.Schema({
     expiresAt: {
         type: Date,
         default: null
-    }
+    },
+    variants:[
+        {
+            images:[
+                {
+                    url: {
+                        type:String,
+                        required: true
+                    }
+                }
+            ],
+            stock:{
+                type: Number,
+                default: 0
+            },
+            attributes:{
+                type: Map,
+                of: String
+            },
+            price: {
+                amount:{
+                    type:Number,
+                    required:true
+                },
+                currency:{
+                    type:String,
+                    enum: ['USD', 'INR', "JPY", 'EUR', 'GBP'],
+                    default:'INR'
+                }
+            }
+        },
+    ]
 }, { timestamps: true })
 
 productSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });

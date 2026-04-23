@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react'
 import SellerHeader from '../components/SellerHeader'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useSelector } from 'react-redux'
 import { useProduct } from '../hooks/useProduct'
 
 const SellerInventory = () => {
 
     const {handleGetSellerProducts} = useProduct()
+    const navigate = useNavigate()
 
     const sellerProducts = useSelector(state => state.product.sellerProducts)
 
@@ -30,11 +31,9 @@ const SellerInventory = () => {
                 </div>
                 <div className='flex flex-wrap gap-5 justify-between'>
                     {sellerProducts.map((prod, idx)=>(
-                        <div key={idx} className='w-60 bg-snitch-surface rounded overflow-hidden'>
+                        <div onClick={() => {navigate(`/seller/product/${prod._id}`)}} key={idx} className='w-60 bg-snitch-surface rounded overflow-hidden cursor-pointer transition-all hover:scale-105'>
                             <div className='flex overflow-x-auto w-60 h-80 relative'>
-                                {prod.images.map((img, i)=>(
-                                    <img className='w-full h-full object-top object-cover' key={i} src={img.url} alt=''/>
-                                ))}
+                                <img className='w-full h-full object-top object-cover' src={prod.images[0].url} alt=''/>
                                 <p className='absolute text-xs uppercase right-2 top-2 bg-snitch-card/60 backdrop-blur-lg px-2 py-1 rounded'>{prod.type}</p>  
                             </div>
                             <div className='p-5 flex flex-col gap-4'>

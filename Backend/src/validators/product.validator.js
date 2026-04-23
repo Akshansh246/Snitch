@@ -22,8 +22,6 @@ export const createProductValidator = [
         .isNumeric().withMessage('Price must be a number'),
     body('priceCurrency')
        .notEmpty().withMessage('priceCurrency is required'), 
-    body('stock')
-        .isNumeric().withMessage('Price must be a number'),
 
     validateRequest
 ]

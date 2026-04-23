@@ -11,6 +11,8 @@ const ProductDetails = () => {
     const {productId} = useParams()
     const [product, setProduct] = useState({});
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isHovering, setIsHovering] = useState(false);
+    const [discountData, setDiscountData] = useState({ finalAmt: 0, discount: 0 });
     const { handleGetProductById } = useProduct()
 
     async function getProduct() {
@@ -60,6 +62,13 @@ const ProductDetails = () => {
         getProduct()
     },[productId])
 
+    useEffect(() => {
+        if (product.price && product.price.amount) {
+            const discount = applyDiscount(product.price.amount);
+            setDiscountData(discount);
+        }
+    }, [product.price?.amount])
+
     if(isEmpty(product)){
         return <Loading/>
     }
@@ -69,42 +78,66 @@ const ProductDetails = () => {
     return (
         <div className='text-white h-screen'>
             <Navbar/>
-            <div className='w-full h-full py-15 px-10 font-extralight'>
-                <div className='flex h-full'>
-                    <div className='w-3/5 h-full overflow-auto flex items-center justify-center relative bg-snitch-surface'>
+            <div className='w-full h-full py-15 px-2 lg:px-10 font-extralight'>
+                <div className='flex flex-col lg:flex-row h-full'>
+                    <div className='w-full lg:w-3/5 h-full flex items-center justify-center relative bg-snitch-surface/60'>
                         {product.images && product.images.length > 0 && (
                             <>
-                                <img 
-                                    className='w-full h-full object-contain' 
-                                    src={product.images[currentImageIndex].url} 
-                                    alt={`Product ${currentImageIndex}`}
-                                />
-                                
                                 {product.images.length > 1 && (
-                                    <>
-                                        <button
-                                            onClick={handlePrevImage}
-                                            className='absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white rounded-full p-3 transition'
-                                        >
-                                            ❮
-                                        </button>
-                                        <button
-                                            onClick={handleNextImage}
-                                            className='absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white rounded-full p-3 transition'
-                                        >
-                                            ❯
-                                        </button>
-                                        
-                                        <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 px-4 py-2 rounded'>
-                                            {currentImageIndex + 1} / {product.images.length}
-                                        </div>
-                                    </>
+                                    <div className='h-full py-4 px-3 flex flex-col gap-3 overflow-y-auto'>
+                                        {product.images.map((img, idx) => (
+                                            <div
+                                                key={idx}
+                                                onClick={() => setCurrentImageIndex(idx)}
+                                                className='shrink-0 cursor-pointer relative group'
+                                            >
+                                                <img
+                                                    src={img.url}
+                                                    alt={`Thumbnail ${idx}`}
+                                                    className={`h-20 w-20 object-cover rounded transition-all ${
+                                                        idx === currentImageIndex
+                                                            ? 'border-2 border-white'
+                                                            : 'opacity-60 group-hover:opacity-90'
+                                                    }`}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
                                 )}
+                                
+                                <div className='flex-1 h-full flex items-center justify-center relative' onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+                                    <img 
+                                        className='w-full h-full object-contain' 
+                                        src={product.images[currentImageIndex].url} 
+                                        alt={`Product ${currentImageIndex}`}
+                                    />
+                                    
+                                    {product.images.length > 1 && isHovering && (
+                                        <>
+                                            <button
+                                                onClick={handlePrevImage}
+                                                className='absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white rounded-full p-3 transition'
+                                            >
+                                                ❮
+                                            </button>
+                                            <button
+                                                onClick={handleNextImage}
+                                                className='absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white rounded-full p-3 transition'
+                                            >
+                                                ❯
+                                            </button>
+                                            
+                                            <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 px-4 py-2 rounded'>
+                                                {currentImageIndex + 1} / {product.images.length}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </>
                         )}
                     </div>
 
-                    <div className='w-2/5 h-full flex flex-col overflow-auto gap-10 px-10'>
+                    <div className='w-full lg:w-2/5 h-full flex flex-col overflow-auto gap-10 px-5 py-5 lg:py-0 lg:px-10'>
                         <div className='flex flex-col gap-5'>
                             <p className='uppercase tracking-[4px] text-snitch-text-muted'>Snitch Atelier</p>
                             <p className='text-5xl font-snitch-display'>{product.title}</p>
@@ -112,13 +145,13 @@ const ProductDetails = () => {
                                 <div className='flex gap-3 items-center'>
                                     <div className='flex gap-1 text-white text-2xl'>
                                         <p>{convertCurrency(product.price.currency)}</p>
-                                        <p>{applyDiscount(product.price.amount).finalAmt}</p>
+                                        <p>{discountData.finalAmt}</p>
                                     </div>
                                     <strike className='flex gap-1'>
                                         <p>{convertCurrency(product.price.currency)}</p>
                                         <p className=''>{product.price.amount}</p>
                                     </strike>
-                                    <p className='text-xl text-snitch-success'>({applyDiscount(product.price.amount).discount}% OFF)</p>
+                                    <p className='text-xl text-snitch-success'>({discountData.discount}% OFF)</p>
                                 </div>
                                 <p className='text-snitch-text-muted text-sm'>VAT INCLUDED</p>
                             </div>
