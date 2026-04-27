@@ -5,9 +5,11 @@ import { useProduct } from '../hooks/useProduct'
 import Navbar from '../../auth/components/Navbar'
 import Loading from '../../auth/pages/Loading'
 import Footer from '../../auth/components/Footer'
+import {useCart} from '../../cart/hooks/useCart'
 
 const ProductDetails = () => {
 
+    const { handleAddItem } = useCart()
     const {productId} = useParams()
     const [product, setProduct] = useState({});
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -270,7 +272,12 @@ const ProductDetails = () => {
                             </div>
                         </div>
                         <div className='flex flex-col gap-5'>
-                            <button className='btn p-4'>Add to cart</button>
+                            <button className='btn p-4'
+                            onClick={() => {handleAddItem({
+                                productId: product._id,
+                                ...(selectedVariant && { variantId: selectedVariant._id })
+                            })}}
+                            >Add to cart</button>
                             <button className='p-4 cursor-pointer transition-all hover:scale-105 border border-snitch-border rounded-lg'>BUY NOW</button>
                         </div>
 

@@ -2,7 +2,7 @@ import productModel from "../models/product.model.js"
 import { uploadFile } from "../services/storage.service.js"
 
 export async function createProduct(req, res) {
-    const {title, description, priceAmount, priceCurrency, type ='published', colorName, colorSwatch, sizes} = req.body
+    const {title, description, priceAmount, priceCurrency, type ='published', colorName, colorSwatch, sizes, stock} = req.body
     const seller = req.user
 
     const images = await Promise.all(req.files.map(async (file)=>{
@@ -29,6 +29,7 @@ export async function createProduct(req, res) {
             swatch: colorSwatch
         },
         sizes: sizes,
+        stock,
         expiresAt: isDraft 
             ? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
             : null
