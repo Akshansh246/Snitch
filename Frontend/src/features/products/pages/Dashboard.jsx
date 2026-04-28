@@ -21,7 +21,7 @@ const Dashboard = () => {
     function getTotalPrice(){
         let totalPrice = 0
         for(let prod of sellerProducts){
-            totalPrice += prod.price.amount
+            totalPrice += prod.price.amount 
         } 
 
         settotalPrice(totalPrice)
@@ -31,7 +31,7 @@ const Dashboard = () => {
         let totalStock = 0
         for(let prod of sellerProducts){
             prod.variants.forEach(variant => {
-                totalStock += variant.stock
+                totalStock += variant.stock + prod.stock
             });
         } 
 

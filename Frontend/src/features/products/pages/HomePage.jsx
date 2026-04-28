@@ -36,7 +36,7 @@ const HomePage = () => {
 
 
     return (
-        <div className='w-screen bg-snitch-bg text-white py-20 px-10'>
+        <div className='w-screen bg-snitch-bg text-white py-20 px-5 md:px-10'>
             <Navbar/>
             <div className='w-full flex justify-between items-center mb-10'>
                 <div className='flex flex-col gap-4'>
@@ -53,7 +53,7 @@ const HomePage = () => {
             </div>
             <div className='flex flex-wrap gap-4'>
                 {products.map((product, idx) => (
-                    <div onClick={() => {navigate(`/product/${product._id}`)}} key={idx} className='bg-snitch-surface cursor-pointer m-auto w-33 md:w-75 rounded overflow-hidden hover:scale-105 transition-all'>
+                    <div onClick={() => {navigate(`/product/${product._id}`)}} key={idx} className='bg-snitch-surface cursor-pointer m-auto w-39 md:w-75 rounded overflow-hidden hover:scale-105 transition-all'>
                         <img className='w-full h-40 md:h-70 object-cover' src={product.images[0].url} alt="" />
                         <div className='p-4 flex flex-col gap-3 justify-between'>
                             <div className='flex flex-col md:flex-row gap-2 justify-between items-center'>

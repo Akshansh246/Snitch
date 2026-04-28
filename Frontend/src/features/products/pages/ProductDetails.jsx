@@ -6,6 +6,7 @@ import Navbar from '../../auth/components/Navbar'
 import Loading from '../../auth/pages/Loading'
 import Footer from '../../auth/components/Footer'
 import {useCart} from '../../cart/hooks/useCart'
+import { toast } from 'react-toastify'
 
 const ProductDetails = () => {
 
@@ -16,6 +17,7 @@ const ProductDetails = () => {
     const [isHovering, setIsHovering] = useState(false);
     const [discountData, setDiscountData] = useState({ finalAmt: 0, discount: 0 });
     const [selectedVariant, setSelectedVariant] = useState(null);
+    const [size, setSize] = useState(null);
     const { handleGetProductById } = useProduct()
 
     async function getProduct() {
@@ -93,7 +95,7 @@ const ProductDetails = () => {
         return <Loading/>
     }
 
-    console.log(product)
+    console.log(size)
 
     return (
         <div className='text-white lg:h-screen'>
@@ -264,7 +266,15 @@ const ProductDetails = () => {
                                 <h3 className='tracking-widest'>SIZE</h3>
                                 <div className='flex gap-2 '>
                                     {product.sizes[0].split(',').map((s,i)=>(
-                                        <div className='p-5 cursor-pointer hover:bg-snitch-surface rounded' key={i}>
+                                        <div
+                                            key={i}
+                                            onClick={() => setSize(prev => prev === s ? null : s)}
+                                            className={`p-5 cursor-pointer rounded border transition-all duration-150 ${
+                                                size === s
+                                                    ? 'bg-white text-black border-white'
+                                                    : 'border-snitch-border/40 hover:bg-snitch-surface'
+                                            }`}
+                                        >
                                             {s}
                                         </div>
                                     ))}
@@ -272,11 +282,17 @@ const ProductDetails = () => {
                             </div>
                         </div>
                         <div className='flex flex-col gap-5'>
-                            <button className='btn p-4'
-                            onClick={() => {handleAddItem({
-                                productId: product._id,
-                                ...(selectedVariant && { variantId: selectedVariant._id })
-                            })}}
+                            <button
+                                className={`btn p-4 transition-opacity duration-200 ${!size ? 'opacity-40 cursor-not-allowed' : ''}`}
+                                disabled={!size}
+                                onClick={() => {
+                                    handleAddItem({
+                                        productId: product._id,
+                                        ...(selectedVariant && { variantId: selectedVariant._id }),
+                                        size
+                                    })
+                                    toast('Product added to cart Successfully')
+                                }}
                             >Add to cart</button>
                             <button className='p-4 cursor-pointer transition-all hover:scale-105 border border-snitch-border rounded-lg'>BUY NOW</button>
                         </div>
