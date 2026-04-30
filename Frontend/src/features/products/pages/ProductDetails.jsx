@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import {useParams} from 'react-router'
 import { useProduct } from '../hooks/useProduct'
-import Navbar from '../../auth/components/Navbar'
 import Loading from '../../auth/pages/Loading'
 import Footer from '../../auth/components/Footer'
 import {useCart} from '../../cart/hooks/useCart'
@@ -99,7 +98,6 @@ const ProductDetails = () => {
 
     return (
         <div className='text-white lg:h-screen'>
-            <Navbar/>
             <div className='w-full h-full pt-15 pb-5 px-2 lg:px-10 font-extralight'>
                 <div className='flex flex-col lg:flex-row h-full'>
                     <div className='w-full lg:w-3/5 h-full flex items-center justify-center relative bg-snitch-surface/60'>

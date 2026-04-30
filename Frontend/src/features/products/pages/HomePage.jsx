@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useProduct } from '../hooks/useProduct'
-import Navbar from '../../auth/components/Navbar'
 import { useNavigate } from 'react-router'
 
 const HomePage = () => {
@@ -37,7 +36,6 @@ const HomePage = () => {
 
     return (
         <div className='w-screen bg-snitch-bg text-white py-20 px-5 md:px-10'>
-            <Navbar/>
             <div className='w-full flex justify-between items-center mb-10'>
                 <div className='flex flex-col gap-4'>
                     <p className='uppercase text-xs tracking-[4px] text-snitch-text-muted'>Collections / Atelier</p>

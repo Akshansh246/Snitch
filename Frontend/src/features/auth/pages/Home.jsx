@@ -1,5 +1,4 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
 import { Link } from 'react-router'
 import { useSelector } from 'react-redux'
 
@@ -7,7 +6,6 @@ const Home = () => {
     const user = useSelector(state => state.auth.user)
     return (
         <div className='bg-snitch-bg text-white w-screen'>
-            <Navbar/>
 
             <div className='w-screen h-screen relative'>
                 {/* <img className='w-screen h-full object-cover' src="https://ik.imagekit.io/devakshu/Snitch/Gemini_Generated_Image_gx774ogx774ogx77.png" alt="" /> */}

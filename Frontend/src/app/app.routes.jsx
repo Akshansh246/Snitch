@@ -13,12 +13,9 @@ import HomePage from "../features/products/pages/HomePage";
 import ProductDetails from "../features/products/pages/ProductDetails";
 import SellerProductDetails from "../features/products/pages/SellerProductDetails";
 import Cart from "../features/cart/pages/Cart";
+import AppLayout from "./AppLayout";
 
 export const routes = createBrowserRouter([
-    {
-        path:'/home',
-        element:<HomePage/>,
-    },
     {
         path:'/register',
         element:<Register/>
@@ -28,44 +25,53 @@ export const routes = createBrowserRouter([
         element:<Login/>
     },
     {
-        path:'/',
-        element:<Home/>
-    },
-    {
-        path:'/product/:productId',
-        element:<ProductDetails/>
-    },
-    {
-        path:'/seller',
-        children:[
-            {
-                path:'/seller/create-product',
-                element: <Protected role="seller"><CreateProduct/></Protected>
-            },
-            {
-                path:'/seller/dashboard',
-                element: <Protected role="seller"><Dashboard/></Protected>
-            },
-            {
-                path:'/seller/all-products',
-                element: <Protected role="seller"><SellerInventory/></Protected>
-            },
-            {
-                path: '/seller/drafts',
-                element: <Protected role="seller"><Drafts/></Protected>
-            },
-            {
-                path: '/seller/product/:productId',
-                element: <Protected role="seller"><SellerProductDetails/> </Protected>
-            }
-        ]
-    },
-    {
-        path: '/cart',
-        element: <Protected><Cart /></Protected>
-    },
-    {
         path:'*',
         element:<Error/>
+    },
+    {
+        element: <AppLayout/>,
+        children: [
+            {
+                path:'/home',
+                element:<HomePage/>,
+            },
+            {
+                path:'/',
+                element:<Home/>
+            },
+            {
+                path:'/product/:productId',
+                element:<ProductDetails/>
+            },
+            {
+                path:'/seller',
+                children:[
+                    {
+                        path:'/seller/create-product',
+                        element: <Protected role="seller"><CreateProduct/></Protected>
+                    },
+                    {
+                        path:'/seller/dashboard',
+                        element: <Protected role="seller"><Dashboard/></Protected>
+                    },
+                    {
+                        path:'/seller/all-products',
+                        element: <Protected role="seller"><SellerInventory/></Protected>
+                    },
+                    {
+                        path: '/seller/drafts',
+                        element: <Protected role="seller"><Drafts/></Protected>
+                    },
+                    {
+                        path: '/seller/product/:productId',
+                        element: <Protected role="seller"><SellerProductDetails/> </Protected>
+                    }
+                ]
+            },
+            {
+                path: '/cart',
+                element: <Protected><Cart /></Protected>
+            },
+        ]
     }
 ])

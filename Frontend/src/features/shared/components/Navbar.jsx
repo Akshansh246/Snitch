@@ -1,20 +1,28 @@
-import React from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { NavLink, useNavigate } from 'react-router'
-import useAuth from '../hooks/useAuth'
+import useAuth from '../../auth/hooks/useAuth'
 import { toast } from 'react-toastify'
+import { useCart } from '../../cart/hooks/useCart'
 
 const Navbar = () => {
 
     const {handleLogout} = useAuth()
     const user = useSelector(state => state.auth.user)
+    const cartItems = useSelector(state => state.cart.items)
     const navigate = useNavigate()
+    const { handleGetCart } = useCart()
 
     async function logout() {
         await handleLogout()
         toast('Logged Out Sucessfully!')
         navigate('/')
     }
+
+    useEffect(()=>{
+        handleGetCart()
+    },[])
 
 
     return (
@@ -43,9 +51,10 @@ const Navbar = () => {
                     <div className='flex items-center gap-4'>
                         <NavLink 
                         to={'/cart'}
-                        className={({ isActive }) => isActive ? "border-b border-white p-1" : "nav-link" }
+                        className={({ isActive }) => isActive ? "border-b border-white p-1 relative" : "nav-link relative" }
                         >
                             <svg className='w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6H15C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6ZM7 6C7 3.23858 9.23858 1 12 1C14.7614 1 17 3.23858 17 6H20C20.5523 6 21 6.44772 21 7V21C21 21.5523 20.5523 22 20 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM5 8V20H19V8H5ZM9 10C9 11.6569 10.3431 13 12 13C13.6569 13 15 11.6569 15 10H17C17 12.7614 14.7614 15 12 15C9.23858 15 7 12.7614 7 10H9Z"></path></svg>
+                            <div className='text-[9px] absolute -right-1 -top-1 bg-snitch-success px-1 rounded-full'>{cartItems.length}</div>
                         </NavLink>
                         <button className='cursor-pointer' onClick={logout}>
                             <svg className='w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 22C4.44772 22 4 21.5523 4 21V3C4 2.44772 4.44772 2 5 2H19C19.5523 2 20 2.44772 20 3V6H18V4H6V20H18V18H20V21C20 21.5523 19.5523 22 19 22H5ZM18 16V13H11V11H18V8L23 12L18 16Z"></path></svg>
