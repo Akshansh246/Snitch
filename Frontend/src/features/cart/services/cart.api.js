@@ -29,3 +29,12 @@ export const incrementCartItemApi = async ({ productId, variantId }) => {
 
     return response.data
 }
+
+export const decrementCartItemApi = async ({productId, variantId, size}) => {
+    const response = await api.patch(`/quantity/decrement/${productId}`,{
+        variantId,
+        size
+    })
+
+    return response.data
+}

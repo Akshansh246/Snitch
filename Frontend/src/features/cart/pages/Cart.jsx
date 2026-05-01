@@ -7,26 +7,10 @@ import { Link } from 'react-router'
 
 const Cart = () => {
     const cartItems = useSelector(state => state.cart.items)
+    const totalPrice = useSelector(state => state.cart.totalPrice)
 
-    const { handleGetCart, handleIncrementCartItem } = useCart()
+    const { handleGetCart, handleIncrementCartItem, handleDecrementCartItem } = useCart()
 
-    function calculateTotalAmount(){
-        let totalAmt = 0
-        for(let item of cartItems){
-            totalAmt += item.price.amount * item.quantity
-        }
-
-        return totalAmt
-    }
-
-    function applyDiscount(amount){
-        const discounts = [5, 10, 15, 20]; 
-        const discount = discounts[Math.floor(Math.random() * discounts.length)];
-
-        const finalAmt = Math.round(amount * (1 - discount / 100));
-
-        return { finalAmt, discount };
-    }
 
     function convertCurrency(name){
         switch(name){
@@ -42,7 +26,7 @@ const Cart = () => {
         handleGetCart()
     },[])
 
-    console.log(cartItems)
+    console.log(cartItems, totalPrice)
 
     return (
         <div className='w-screen h-screen text-white'>
@@ -60,21 +44,37 @@ const Cart = () => {
                             <div className='flex-col md:flex-row flex w-full p-4 gap-5 bg-snitch-surface' key={idx}>
                                 <img className='h-65 md:w-45 md:h-55 object-cover' src={(item.variant)? item.variant.images[0].url : item.product.images[0].url} alt="" />
                                 <div className='flex w-full flex-col gap-4 justify-between'>
-                                    <div className='flex flex-col gap-4 md:gap-2'>
+                                    <div className='flex flex-col gap-5 md:gap-2'>
                                         <div className='flex justify-between'>
-                                            <h3 className='md:text-xl'>{item.product.title}</h3>
-                                            <p className='text-snitch-text-muted'>{convertCurrency(item.product.price.currency)} {item.product.price.amount}</p>
+                                            <h3 className='md:text-xl font-snitch-display'>{item.product.title}</h3>
+                                            <p className='text-snitch-text-muted'>{convertCurrency(item.price.currency)} {item.product.price.amount}</p>
                                         </div>
-                                        <div className='text-xs text-snitch-text-muted uppercase'>
+                                        <div className='text-xs flex flex-col gap-2 text-snitch-text-muted uppercase'>
                                             <p>COLOR: {(item.variant)?(item.variant.attributes.value):item.product.color.name}</p>
                                             <p>SIZE: {item.size}</p>
                                         </div>
-                                        <p className='uppercase text-snitch-success text-xs tracking-widest'>{(item.variant)? item.variant.stock : item.product.stock} left in stock</p>
+                                        <p className='uppercase text-snitch-text-muted text-xs tracking-widest'>{(item.variant)? item.variant.stock : item.product.stock} left in stock</p>
+                                        {
+                                            item.price.amount !== item.product.price.amount && (
+                                                <>
+                                                    {
+                                                        item.price.amount > item.product.price.amount
+                                                        ? <p className='text-[12px] tracking-widest text-snitch-success uppercase'>Hurray! You saved {item.price.amount-item.product.price.amount}/-, you will get it at {item.product.price.amount}/- only</p>
+                                                        : <p className='text-[12px] tracking-widest text-snitch-danger uppercase'>Sorry, the price is {item.product.price.amount - item.price.amount}/- higher than usual.</p>
+                                                    }
+                                                </>
+                                            )
+                                        }
                                     </div>
                                     <div className='flex items-center justify-between'>
                                         <div>
-                                            <button className='px-2 bg-snitch-neutral cursor-pointer'>-</button>
+                                            <button
+                                            onClick={()=>{handleDecrementCartItem({ productId: item.product._id, variantId: (item.variant)?item.variant._id:null, size:item.size })}} 
+                                            className='px-2 bg-snitch-neutral cursor-pointer'
+                                            >-</button>
+
                                             <button className='px-2 bg-snitch-neutral'>{item.quantity}</button>
+                                            
                                             <button 
                                             onClick={()=>{handleIncrementCartItem({ productId: item.product._id, variantId: (item.variant)?item.variant._id:null })}}
                                             className='px-2 bg-snitch-neutral cursor-pointer'
@@ -94,21 +94,17 @@ const Cart = () => {
                         <div className='flex flex-col gap-2 text-snitch-text-muted text-sm uppercase'>
                             <div className='flex justify-between '>
                                 <p>Subtotal</p>
-                                <p className='text-lg text-white'>{convertCurrency()}{calculateTotalAmount()}</p>
+                                <p className='text-lg text-white'>{convertCurrency()}{totalPrice}</p>
                             </div>
                             <div className='flex justify-between'>
                                 <p>Shipping</p>
                                 <p className='text-xs italic'>calculated at checkout</p>
                             </div>
-                            <div className='flex justify-between'>
-                                <p>Discount</p>
-                                <p className='text-snitch-success'>{applyDiscount(calculateTotalAmount()).discount}%</p>
-                            </div>
                         </div>
                         <div className='border-b border-snitch-text-dim/50' />
                         <div className='flex justify-between'>
                             <p className='text-lg uppercase'>Total</p>
-                            <p className='text-lg text-snitch-success'>{convertCurrency()}{applyDiscount(calculateTotalAmount()).finalAmt}</p>
+                            <p className='text-lg text-snitch-success'>{convertCurrency()}{totalPrice}</p>
                         </div>
                         <div className='flex flex-col gap-2 w-full'>
                             <button className='px-4 py-3 btn'>Proceed To checkOut</button>

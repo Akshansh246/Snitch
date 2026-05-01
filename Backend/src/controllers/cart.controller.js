@@ -95,43 +95,80 @@ export const addToCart = async (req, res) => {
 export const getCart = async (req, res) => {
     const user = req.user;
 
-    let cart = await cartModel
-        .findOne({ user: user._id })
-        .populate('items.product');
+    const result = await cartModel.aggregate([
+        { $match: { user: user._id } },
+        { $unwind: '$items' },
 
-    if (!cart) {
-        cart = await cartModel.create({ user: user._id });
-    }
+        {
+            $lookup: {
+                from: 'products',
+                localField: 'items.product',
+                foreignField: '_id',
+                as: 'items.product'
+            }
+        },
 
-    const updatedItems = cart.items.map(item => {
-        const product = item.product;
+        { $unwind: '$items.product' },
 
-        if (!product || !product.variants || !item.variant) {
-            return {
-                ...item.toObject(),
-                variant: null
-            };
+        {
+            $addFields: {
+                selectedVariant: {
+                    $cond: [
+                        { $ifNull: ['$items.variant', false] },
+                        {
+                            $arrayElemAt: [
+                                {
+                                    $filter: {
+                                        input: '$items.product.variants',
+                                        as: 'v',
+                                        cond: {
+                                            $eq: ['$$v._id', '$items.variant']
+                                        }
+                                    }
+                                },
+                                0
+                            ]
+                        },
+                        null
+                    ]
+                }
+            }
+        },
+
+        {
+            $addFields: {
+                itemPrice: {
+                    $multiply: [
+                        '$items.quantity',
+                        '$items.product.price.amount' 
+                    ]
+                }
+            }
+        },
+
+        {
+            $group: {
+                _id: '$_id',
+                total: { $sum: '$itemPrice' },
+                items: {
+                    $push: {
+                        product: '$items.product',
+                        size: '$items.size',
+                        variant: '$selectedVariant',
+                        quantity: '$items.quantity',
+                        price: '$items.price'
+                    }
+                }
+            }
         }
+    ]);
 
-        const variantDetails = product.variants.find(v => 
-            v?._id?.toString() === item.variant.toString()
-        );
-
-        return {
-            ...item.toObject(),
-            variant: variantDetails || null
-        };
-    });
-
-    const updatedCart = {
-        ...cart.toObject(),
-        items: updatedItems
-    };
+    const cart = result[0] || { items: [], total: 0 };
 
     return res.status(200).json({
         message: 'Cart fetched Successfully',
         success: true,
-        cart: updatedCart
+        cart
     });
 };
 
@@ -179,14 +216,114 @@ export const incrementCartItemQuantity = async (req, res) => {
         });
     }
 
+    const filter = variantId
+        ? {
+            user: req.user._id,
+            "items.product": productId,
+            "items.variant": variantId
+        }
+        : {
+            user: req.user._id,
+            "items.product": productId,
+            "items.variant": { $exists: false }
+        };
+
     await cartModel.findOneAndUpdate(
-        { user:req.user._id, "items.product":productId },
-        { $inc: {'items.$.quantity': 1} },
-        { new: true }
-    )
+        filter,
+        { $inc: { "items.$.quantity": 1 } }
+    );
 
     return res.status(200).json({
         message: 'Cart items updated successfully',
         success: true,
     })
 }
+
+export const decrementCartItemQuantity = async (req, res) => {
+    const { productId } = req.params;
+    const { variantId, size } = req.body;
+
+    const cart = await cartModel.findOne({ user: req.user._id });
+
+    if (!cart) {
+        return res.status(404).json({
+            message: "Cart not found",
+            success: false
+        });
+    }
+
+    const item = cart.items.find(item =>
+        item.product.toString() === productId &&
+        item.size === size &&
+        (variantId
+            ? item.variant?.toString() === variantId
+            : !item.variant)
+    );
+
+    if (!item) {
+        return res.status(404).json({
+            message: "Item not found in cart",
+            success: false
+        });
+    }
+
+    if (item.quantity - 1 <= 0) {
+
+        const filter = variantId
+            ? {
+                user: req.user._id,
+                "items.product": productId,
+                "items.variant": variantId,
+                "items.size": size
+            }
+            : {
+                user: req.user._id,
+                "items.product": productId,
+                "items.variant": { $exists: false },
+                "items.size": size
+            };
+
+        await cartModel.findOneAndUpdate(
+            { user: req.user._id },
+            {
+                $pull: {
+                    items: {
+                        product: productId,
+                        ...(variantId && { variant: variantId }),
+                        size
+                    }
+                }
+            }
+        );
+
+        return res.status(200).json({
+            message: "Item removed from cart",
+            success: true
+        });
+    }
+
+
+    const filter = variantId
+        ? {
+            user: req.user._id,
+            "items.product": productId,
+            "items.variant": variantId,
+            "items.size": size
+        }
+        : {
+            user: req.user._id,
+            "items.product": productId,
+            "items.variant": { $exists: false },
+            "items.size": size
+        };
+
+    await cartModel.findOneAndUpdate(
+        filter,
+        { $inc: { "items.$.quantity": -1 } }
+    );
+
+    return res.status(200).json({
+        message: "Cart item decremented",
+        success: true
+    });
+};
