@@ -14,6 +14,7 @@ import ProductDetails from "../features/products/pages/ProductDetails";
 import SellerProductDetails from "../features/products/pages/SellerProductDetails";
 import Cart from "../features/cart/pages/Cart";
 import AppLayout from "./AppLayout";
+import OrderSuccess from "../features/cart/pages/OrderSuccess";
 
 export const routes = createBrowserRouter([
     {
@@ -42,6 +43,10 @@ export const routes = createBrowserRouter([
             {
                 path:'/product/:productId',
                 element:<ProductDetails/>
+            },
+            {
+                path: '/order-success',
+                element: <OrderSuccess/>
             },
             {
                 path:'/seller',

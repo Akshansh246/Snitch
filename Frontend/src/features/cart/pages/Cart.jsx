@@ -3,13 +3,19 @@ import { useSelector } from 'react-redux'
 import {useCart} from '../hooks/useCart'
 import { useEffect } from 'react'
 import EmptyCart from '../components/EmptyCart'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { useRazorpay } from 'react-razorpay'
 
 const Cart = () => {
     const cartItems = useSelector(state => state.cart.items)
     const totalPrice = useSelector(state => state.cart.totalPrice)
+    const user = useSelector(state => state.auth.user)
+    const currency = useSelector(state => state.cart.currency)
 
-    const { handleGetCart, handleIncrementCartItem, handleDecrementCartItem } = useCart()
+    const navigate = useNavigate()
+
+    const {Razorpay} = useRazorpay()
+    const { handleGetCart, handleIncrementCartItem, handleDecrementCartItem, handleCreateCartOrder, handleVerifyCartOrder } = useCart()
 
 
     function convertCurrency(name){
@@ -22,11 +28,43 @@ const Cart = () => {
         }
     }
 
+    async function handleCheckout() {
+        const order = await handleCreateCartOrder()
+        console.log(order)
+
+        const options = {
+            key: "rzp_test_Sk4OElagSy3nZv",
+            amount: order.amount,
+            currency: order.currency,
+            name: "Snitch",
+            description: "Test Transaction",
+            order_id: order.id, 
+            handler: async (response) => {
+                const isValid = await handleVerifyCartOrder(response)
+
+                if(isValid){
+                    navigate(`/order-success?order_id=${response?.razorpay_order_id}`)
+                }
+            },
+            prefill: {
+                name: user?.fullname,
+                email: user?.email,
+                contact: user?.contact,
+            },
+            theme: {
+                color: "#09090B",
+            },
+        };
+
+        const razorpayInstance = new Razorpay(options);
+        razorpayInstance.open();
+    }
+
     useEffect(()=>{
         handleGetCart()
     },[])
 
-    console.log(cartItems, totalPrice)
+    console.log(cartItems, totalPrice, currency)
 
     return (
         <div className='w-screen h-screen text-white'>
@@ -94,20 +132,27 @@ const Cart = () => {
                         <div className='flex flex-col gap-2 text-snitch-text-muted text-sm uppercase'>
                             <div className='flex justify-between '>
                                 <p>Subtotal</p>
-                                <p className='text-lg text-white'>{convertCurrency()}{totalPrice}</p>
+                                <p className='text-lg text-white'>{convertCurrency(currency)}{totalPrice}</p>
                             </div>
                             <div className='flex justify-between'>
                                 <p>Shipping</p>
-                                <p className='text-xs italic'>calculated at checkout</p>
+                                <p className='text-xs italic'>Complimentary</p>
+                            </div>
+                            <div className='flex justify-between'>
+                                <p>Duties and Taxes</p>
+                                <p className='text-xs italic'>Included</p>
                             </div>
                         </div>
                         <div className='border-b border-snitch-text-dim/50' />
                         <div className='flex justify-between'>
                             <p className='text-lg uppercase'>Total</p>
-                            <p className='text-lg text-snitch-success'>{convertCurrency()}{totalPrice}</p>
+                            <p className='text-lg text-snitch-success'>{convertCurrency(currency)}{totalPrice}</p>
                         </div>
                         <div className='flex flex-col gap-2 w-full'>
-                            <button className='px-4 py-3 btn'>Proceed To checkOut</button>
+                            <button 
+                            onClick={handleCheckout}
+                            className='px-4 py-3 btn'
+                            >Proceed To checkOut</button>
                             <Link className='px-4 py-3 border rounded-lg text-center' to={'/home'}>Continue Shopping</Link>
                         </div>
                         <div className='flex gap-1 justify-center items-center text-xs text-snitch-text-muted'>
