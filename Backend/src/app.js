@@ -14,6 +14,7 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
+app.use(express.static('public'));
 
 
 app.use(passport.initialize())
@@ -37,5 +38,12 @@ app.get('/',(req, res)=>{
 app.use('/api/auth',authRouter)
 app.use('/api/products', productRouter)
 app.use('/api/cart', cartRouter)
+
+
+app.get('*name', (req, res) => {
+    res.sendFile("index.html", {
+        root: "public"
+    })
+})
 
 export default app
