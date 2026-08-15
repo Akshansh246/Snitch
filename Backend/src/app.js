@@ -21,10 +21,16 @@ app.use(express.static('public'));
 
 app.use(passport.initialize())
 
+const callbackURL = process.env.GOOGLE_CALLBACK_URL || (
+    process.env.NODE_ENV === 'production' || config.NODE_ENV === 'production'
+        ? 'https://snitch-hs7h.onrender.com/api/auth/google/callback'
+        : '/api/auth/google/callback'
+);
+
 passport.use(new GoogleStrategy({
     clientID: config.GOOGLE_CLIENT_ID,
     clientSecret: config.CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback'
+    callbackURL
 }, (accessToken, refreshToken, profile, done)=>{
     return done(null, profile)
 }))
