@@ -15,6 +15,11 @@ import SellerProductDetails from "../features/products/pages/SellerProductDetail
 import Cart from "../features/cart/pages/Cart";
 import AppLayout from "./AppLayout";
 import OrderSuccess from "../features/cart/pages/OrderSuccess";
+import Profile from "../features/auth/pages/Profile";
+import WishlistPage from "../features/products/pages/WishlistPage";
+import OrdersPage from "../features/cart/pages/OrdersPage";
+import OrderTrackingPage from "../features/cart/pages/OrderTrackingPage";
+import CheckoutConfirmationPage from "../features/cart/pages/CheckoutConfirmationPage";
 
 export const routes = createBrowserRouter([
     {
@@ -39,6 +44,26 @@ export const routes = createBrowserRouter([
             {
                 path:'/',
                 element:<Home/>
+            },
+            {
+                path:'/profile',
+                element: <Protected><Profile /></Protected>
+            },
+            {
+                path:'/wishlist',
+                element: <WishlistPage />
+            },
+            {
+                path:'/orders',
+                element: <Protected><OrdersPage /></Protected>
+            },
+            {
+                path:'/orders/:orderId/track',
+                element: <Protected><OrderTrackingPage /></Protected>
+            },
+            {
+                path:'/checkout',
+                element: <Protected><CheckoutConfirmationPage /></Protected>
             },
             {
                 path:'/product/:productId',

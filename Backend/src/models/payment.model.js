@@ -18,7 +18,7 @@ const paymentSchema = new mongoose.Schema({
     },
     user:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "users",
         required: true
     },
     orderItems: [
@@ -32,8 +32,20 @@ const paymentSchema = new mongoose.Schema({
             size: String,
             price: priceSchema
         }
-    ]
-})
+    ],
+    estimatedDeliveryDate: {
+        type: Date
+    },
+    shippingStatus: {
+        type: String,
+        enum: ["Processing", "In Transit", "Out for Delivery", "Delivered"],
+        default: "Processing"
+    },
+    shippingCity: {
+        type: String,
+        default: "Mumbai Atelier Hub"
+    }
+}, { timestamps: true })
 
 const paymentModel = mongoose.model('payment', paymentSchema)
 

@@ -76,12 +76,12 @@ const AddVariantModal = ({ onClose, onAdd }) => {
                 {/* Header */}
                 <div className='flex justify-between items-center'>
                     <div>
-                        <p className='text-xs uppercase tracking-[5px] text-snitch-text-muted mb-1'>New Entry</p>
-                        <h2 className='font-snitch-display text-2xl text-white font-light'>Add New Variant</h2>
+                        <p className='text-xs uppercase tracking-[5px] text-snitch-text-muted mb-1 font-bold'>New Entry</p>
+                        <h2 className='font-snitch-display text-2xl text-snitch-text font-bold'>Add New Variant</h2>
                     </div>
                     <button
                         onClick={onClose}
-                        className='text-snitch-text-muted hover:text-white transition-colors cursor-pointer p-1'
+                        className='text-snitch-text-muted hover:text-snitch-text transition-colors cursor-pointer p-1'
                     >
                         <svg className='w-5 h-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M5.46264 4.40314L12 10.9365L18.5374 4.40314C18.9209 4.01969 19.553 4.01969 19.9365 4.40314C20.3199 4.78659 20.3199 5.41865 19.9365 5.8021L13.3991 12.3395L19.9365 18.8769C20.3199 19.2603 20.3199 19.8924 19.9365 20.2758C19.553 20.6593 18.9209 20.6593 18.5374 20.2758L12 13.7385L5.46264 20.2758C5.07919 20.6593 4.44713 20.6593 4.06368 20.2758C3.68023 19.8924 3.68023 19.2603 4.06368 18.8769L10.6011 12.3395L4.06368 5.8021C3.68023 5.41865 3.68023 4.78659 4.06368 4.40314C4.44713 4.01969 5.07919 4.01969 5.46264 4.40314Z" />
@@ -254,8 +254,8 @@ const VariantCard = ({ variant, pending = false, onDelete, onStockEdit }) => {
                         </span>
                     )}
                     {attrEntries.length > 0 ? attrEntries.map(([k, v], i) => (
-                        <span key={i} className='text-xs bg-snitch-card px-2 py-1 rounded-full text-snitch-text-muted uppercase tracking-wider'>
-                            {k}: <span className='text-white'>{v}</span>
+                        <span key={i} className='text-xs bg-snitch-card px-2.5 py-1 rounded-full text-snitch-text-muted uppercase tracking-wider font-semibold border border-snitch-border/40'>
+                            {k}: <span className='text-snitch-text font-bold'>{v}</span>
                         </span>
                     )) : (
                         <span className='text-xs text-snitch-text-dim italic'>No attributes</span>
@@ -264,40 +264,40 @@ const VariantCard = ({ variant, pending = false, onDelete, onStockEdit }) => {
 
                 {/* Price */}
                 <div className='flex items-center gap-1 text-sm'>
-                    <span className='text-snitch-text-muted'>{variant.price?.currency ?? 'INR'}</span>
-                    <span className='text-snitch-success font-medium'>{variant.price?.amount ?? 0}</span>
+                    <span className='text-snitch-text-muted font-bold'>{variant.price?.currency ?? 'INR'}</span>
+                    <span className='text-snitch-text font-bold'>{variant.price?.amount ?? 0}</span>
                 </div>
             </div>
 
             {/* Stock */}
             <div className='flex flex-col items-end justify-between shrink-0'>
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-2 font-mono'>
                     {editingStock && onStockEdit ? (
                         <>
                             <input
                                 type='number'
                                 value={stockVal}
                                 onInput={e => setStockVal(e.target.value)}
-                                className='w-16 px-2 py-1 text-sm text-center'
+                                className='w-16 px-2 py-1 text-sm text-center bg-snitch-bg border border-snitch-border rounded text-snitch-text focus:outline-none'
                                 autoFocus
                             />
                             <button
                                 onClick={handleStockSave}
-                                className='text-snitch-success text-xs cursor-pointer hover:opacity-70 transition-opacity'
+                                className='text-snitch-text text-xs cursor-pointer hover:opacity-70 transition-opacity p-1'
                             >
-                                <svg className='w-4' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg className='w-4 h-4' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z" />
                                 </svg>
                             </button>
                         </>
                     ) : (
                         <>
-                            <p className='text-xs text-snitch-text-muted uppercase tracking-wider'>Stock:</p>
-                            <p className='text-white font-medium'>{variant.stock}</p>
+                            <p className='text-xs text-snitch-text-muted uppercase tracking-wider font-bold'>Stock:</p>
+                            <p className='text-snitch-text font-bold text-sm'>{variant.stock}</p>
                             {onStockEdit && (
                                 <button
                                     onClick={() => setEditingStock(true)}
-                                    className='text-snitch-text-dim hover:text-white transition-colors cursor-pointer'
+                                    className='text-snitch-text-muted hover:text-snitch-text transition-colors cursor-pointer p-0.5'
                                     title='Edit stock'
                                 >
                                     <svg className='w-3.5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -359,32 +359,35 @@ const SellerProductDetails = () => {
             stock,
             price: price ?? product.price,
         })
-        toast('Variant staged — click Save to persist!')
+        toast.info('Variant staged! Click "Save All Changes" to publish to inventory.')
     }
 
     // Remove pending variant
     const handleDeletePending = () => {
         setPendingVariant(null)
-        toast('Pending variant removed')
+        toast.warn('Pending variant removed.')
     }
 
     // Inline stock edit on pending variant
     const handleStockEdit = (newStock) => {
         setPendingVariant(prev => ({ ...prev, stock: newStock }))
+        toast.success(`Stock updated to ${newStock}!`)
     }
 
     // POST pendingVariant to backend, then refresh
     const handleSaveChanges = async () => {
         if (!pendingVariant) return
-        await handleAddProductVariant(productId, pendingVariant)
-        setPendingVariant(null)
-        await getProduct()
+        const res = await handleAddProductVariant(productId, pendingVariant)
+        if (res) {
+            setPendingVariant(null)
+            await getProduct()
+        }
     }
 
 
     if (loading) {
         return (
-            <div className='w-screen h-screen bg-snitch-bg flex items-center justify-center'>
+            <div className='w-full min-h-screen bg-snitch-bg flex items-center justify-center'>
                 <SellerHeader />
                 <div className='flex flex-col items-center gap-4 text-snitch-text-muted'>
                     <div className='w-8 h-8 border-2 border-snitch-primary/30 border-t-snitch-primary rounded-full animate-spin' />
@@ -396,7 +399,7 @@ const SellerProductDetails = () => {
 
     if (!product) {
         return (
-            <div className='w-screen h-screen bg-snitch-bg flex items-center justify-center'>
+            <div className='w-full min-h-screen bg-snitch-bg flex items-center justify-center'>
                 <SellerHeader />
                 <p className='text-snitch-text-muted'>Product not found.</p>
             </div>
@@ -408,7 +411,7 @@ const SellerProductDetails = () => {
         : product.sizes ?? []
 
     return (
-        <div className='bg-snitch-bg min-h-screen text-white font-light'>
+        <div className='bg-snitch-bg min-h-screen text-snitch-text font-mono w-full overflow-x-hidden'>
             <SellerHeader />
 
             {/* Add Variant Modal */}
@@ -419,22 +422,22 @@ const SellerProductDetails = () => {
                 />
             )}
 
-            <div className='w-full max-w-5xl mx-auto px-5 lg:px-0 pt-24 pb-20 flex flex-col gap-20'>
+            <div className='w-full max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 pt-24 pb-20 flex flex-col gap-12 sm:gap-16'>
 
                 {/* ── BREADCRUMB ───────────────────────────────────────── */}
-                <div className='flex items-center gap-2 text-xs text-snitch-text-dim uppercase tracking-[3px]'>
+                <div className='flex items-center gap-2 text-xs text-snitch-text-muted uppercase tracking-[3px] flex-wrap font-bold'>
                     <span>Inventory</span>
                     <span>/</span>
-                    <span className='text-snitch-text-muted'>{product.title}</span>
+                    <span className='text-snitch-text font-bold line-clamp-1'>{product.title}</span>
                 </div>
 
                 {/* ── SECTION 1 — PRODUCT OVERVIEW ─────────────────────── */}
-                <div className='flex flex-col lg:flex-row gap-10'>
+                <div className='flex flex-col lg:flex-row gap-8 lg:gap-12'>
 
                     {/* Left — Image Gallery */}
-                    <div className='lg:w-2/5 flex flex-col gap-3'>
+                    <div className='w-full lg:w-2/5 flex flex-col gap-3'>
                         {/* Main image */}
-                        <div className='w-full h-120 rounded-lg overflow-hidden bg-snitch-surface'>
+                        <div className='w-full h-80 sm:h-96 lg:h-110 rounded-2xl overflow-hidden bg-snitch-surface border border-snitch-border/40 shadow-sm'>
                             {product.images?.[activeImage]?.url ? (
                                 <img
                                     src={product.images[activeImage].url}
@@ -442,20 +445,20 @@ const SellerProductDetails = () => {
                                     className='w-full h-full object-cover object-top transition-all duration-500'
                                 />
                             ) : (
-                                <div className='w-full h-full flex items-center justify-center text-snitch-text-dim'>
+                                <div className='w-full h-full flex items-center justify-center text-snitch-text-muted text-xs'>
                                     No image
                                 </div>
                             )}
                         </div>
 
                         {/* Thumbnails */}
-                        <div className='flex gap-2'>
+                        <div className='flex gap-2 overflow-x-auto py-1'>
                             {product.images?.map((img, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setActiveImage(idx)}
-                                    className={`w-20 h-24 rounded overflow-hidden shrink-0 cursor-pointer transition-all
-                                        ${activeImage === idx ? 'ring-1 ring-white/60' : 'opacity-50 hover:opacity-80'}`}
+                                    className={`w-16 h-20 sm:w-20 sm:h-24 rounded-xl overflow-hidden shrink-0 cursor-pointer transition-all
+                                        ${activeImage === idx ? 'ring-2 ring-snitch-text opacity-100' : 'opacity-50 hover:opacity-80'}`}
                                 >
                                     <img
                                         src={img.url}
@@ -468,30 +471,30 @@ const SellerProductDetails = () => {
                     </div>
 
                     {/* Right — Product Info */}
-                    <div className='lg:w-3/5 flex flex-col gap-6'>
+                    <div className='w-full lg:w-3/5 flex flex-col gap-5'>
 
                         {/* Status badge */}
                         <div className='flex items-center gap-3'>
-                            <span className={`text-[10px] uppercase tracking-[3px] px-3 py-1 rounded-full font-medium
+                            <span className={`text-[10px] uppercase tracking-[3px] px-3 py-1 rounded-full font-bold
                                 ${product.type === 'published'
-                                    ? 'bg-snitch-success/10 text-snitch-success'
-                                    : 'bg-snitch-text-dim/10 text-snitch-text-dim'
+                                    ? 'bg-snitch-dark-hero text-white border border-black'
+                                    : 'bg-snitch-surface text-snitch-text border border-snitch-border/40'
                                 }`}>
-                                ● {product.type}
+                                ● {product.type || 'Published'}
                             </span>
                         </div>
 
                         {/* Title */}
-                        <h1 className='font-snitch-display text-4xl lg:text-5xl font-light leading-tight'>
+                        <h1 className='font-snitch-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-snitch-text'>
                             {product.title}
                         </h1>
 
                         {/* Price */}
                         <div className='flex items-baseline gap-2'>
-                            <span className='text-xs text-snitch-text-muted uppercase tracking-[3px]'>
+                            <span className='text-xs text-snitch-text-muted uppercase tracking-[3px] font-bold'>
                                 {product.price?.currency}
                             </span>
-                            <span className='text-3xl text-white'>
+                            <span className='text-2xl sm:text-3xl text-snitch-text font-bold'>
                                 {product.price?.amount?.toLocaleString('en-IN')}
                             </span>
                         </div>
@@ -499,13 +502,13 @@ const SellerProductDetails = () => {
                         {/* Color */}
                         {product.color && (
                             <div className='flex items-center gap-3'>
-                                <p className='text-xs uppercase tracking-[4px] text-snitch-text-muted'>Color</p>
+                                <p className='text-xs uppercase tracking-[4px] text-snitch-text-muted font-semibold'>Color</p>
                                 <div className='flex items-center gap-2'>
                                     <div
-                                        className='w-5 h-5 rounded-full border border-white/10'
+                                        className='w-5 h-5 rounded-full border border-white/20'
                                         style={{ backgroundColor: product.color.swatch }}
                                     />
-                                    <span className='text-sm text-snitch-text'>{product.color.name}</span>
+                                    <span className='text-xs text-snitch-text capitalize'>{product.color.name}</span>
                                 </div>
                             </div>
                         )}
@@ -513,12 +516,12 @@ const SellerProductDetails = () => {
                         {/* Sizes */}
                         {sizes.length > 0 && (
                             <div className='flex flex-col gap-2'>
-                                <p className='text-xs uppercase tracking-[4px] text-snitch-text-muted'>Available Sizes</p>
+                                <p className='text-xs uppercase tracking-[4px] text-snitch-text-muted font-semibold'>Available Sizes</p>
                                 <div className='flex gap-2 flex-wrap'>
                                     {sizes.map((size, i) => (
                                         <span
                                             key={i}
-                                            className='border border-snitch-border text-snitch-text text-xs px-4 py-2 rounded uppercase tracking-wider'
+                                            className='border border-snitch-border/60 text-snitch-text text-xs px-3 py-1.5 rounded uppercase tracking-wider bg-snitch-surface/30'
                                         >
                                             {size}
                                         </span>
@@ -527,43 +530,42 @@ const SellerProductDetails = () => {
                             </div>
                         )}
 
-
-                        {/* Divider — tonal background strip */}
-                        <div className='h-px w-full bg-snitch-surface' />
+                        {/* Divider */}
+                        <div className='h-px w-full bg-snitch-border/30 my-1' />
 
                         {/* Description */}
-                        <p className='text-snitch-text-muted text-sm leading-relaxed'>{product.description}</p>
+                        <p className='text-snitch-text-muted text-xs sm:text-sm leading-relaxed'>{product.description}</p>
 
                         {/* Seller Info */}
                         {product.seller && (
-                            <div className='flex items-center gap-3 pt-2'>
-                                <div className='w-8 h-8 rounded-full bg-snitch-card flex items-center justify-center text-snitch-text-muted text-sm'>
+                            <div className='flex items-center gap-3 pt-2 bg-snitch-surface p-4 rounded-2xl border border-snitch-border/40 shadow-sm'>
+                                <div className='w-8 h-8 rounded-full bg-snitch-dark-hero text-white flex items-center justify-center text-xs font-bold shrink-0'>
                                     {product.seller.fullname?.[0]?.toUpperCase()}
                                 </div>
                                 <div className='flex flex-col'>
-                                    <p className='text-sm text-white'>{product.seller.fullname}</p>
-                                    <p className='text-xs text-snitch-text-dim'>{product.seller.email}</p>
+                                    <p className='text-xs sm:text-sm text-snitch-text font-bold'>{product.seller.fullname}</p>
+                                    <p className='text-[10px] text-snitch-text-muted'>{product.seller.email}</p>
                                 </div>
-                                <span className='ml-auto text-[10px] uppercase tracking-[3px] text-snitch-text-dim'>Seller</span>
+                                <span className='ml-auto text-[10px] uppercase tracking-[3px] text-snitch-text-muted font-bold'>Curator</span>
                             </div>
                         )}
                     </div>
                 </div>
 
                 {/* ── SECTION 2 — VARIANTS MANAGER ─────────────────────── */}
-                <div className='flex flex-col gap-8'>
+                <div className='flex flex-col gap-6 pt-6 border-t border-snitch-border/40'>
 
                     {/* Section header */}
-                    <div className='flex justify-between items-center'>
+                    <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
                         <div className='flex flex-col gap-1'>
-                            <h2 className='uppercase tracking-[5px] text-lg'>Product Variants</h2>
+                            <h2 className='uppercase tracking-[4px] text-base sm:text-lg font-bold font-snitch-display text-snitch-text'>Product Variants</h2>
                             <p className='text-xs text-snitch-text-muted'>
                                 {variants.length + (pendingVariant ? 1 : 0)} variant{(variants.length + (pendingVariant ? 1 : 0)) !== 1 ? 's' : ''} configured
                             </p>
                         </div>
                         <button
                             onClick={() => setShowModal(true)}
-                            className='btn px-5 py-3 text-xs cursor-pointer'
+                            className='btn px-4 py-2.5 text-xs font-semibold cursor-pointer shrink-0'
                         >
                             + Add Variant
                         </button>
@@ -571,30 +573,28 @@ const SellerProductDetails = () => {
 
                     {/* Empty state */}
                     {variants.length === 0 && !pendingVariant ? (
-                        <div className='bg-snitch-surface rounded-lg flex flex-col items-center justify-center gap-5 py-20'>
-                            <svg className='w-12 text-snitch-text-dim' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <div className='bg-snitch-surface/50 border border-snitch-border/30 rounded-xl flex flex-col items-center justify-center gap-4 py-12 px-4 text-center'>
+                            <svg className='w-10 h-10 text-snitch-text-dim' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M6.99805 4V11L11.998 8.5L16.998 11V4H19.998C20.5503 4 20.998 4.44772 20.998 5V21C20.998 21.5523 20.5503 22 19.998 22H3.99805C3.44576 22 2.99805 21.5523 2.99805 21V5C2.99805 4.44772 3.44576 4 3.99805 4H6.99805ZM11.998 8L7.49805 3H16.498L11.998 8ZM12.998 11.2361L11.998 10.7361L10.998 11.2361V20H12.998V11.2361ZM14.998 14V16H18.998V14H14.998Z" />
                             </svg>
-                            <div className='flex flex-col gap-1 items-center text-center'>
-                                <p className='text-snitch-text-muted text-sm font-light'>No variants configured yet.</p>
-                                <p className='text-snitch-text-dim text-xs max-w-sm'>
+                            <div className='flex flex-col gap-1 items-center max-w-sm'>
+                                <p className='text-snitch-text-muted text-sm font-medium'>No variants configured yet.</p>
+                                <p className='text-snitch-text-dim text-xs leading-relaxed'>
                                     Add color, size or material variants with individual stock counts and pricing.
                                 </p>
                             </div>
                             <button
                                 onClick={() => setShowModal(true)}
-                                className='btn px-6 py-3 text-xs cursor-pointer'
+                                className='btn px-5 py-2.5 text-xs font-semibold cursor-pointer mt-2'
                             >
                                 Add First Variant
                             </button>
                         </div>
                     ) : (
                         <div className='flex flex-col gap-3'>
-                            {/* Existing saved variants from backend */}
                             {variants.map((variant, idx) => (
                                 <VariantCard key={idx} variant={variant} />
                             ))}
-                            {/* Locally staged variant (not yet saved) */}
                             {pendingVariant && (
                                 <VariantCard
                                     variant={pendingVariant}
@@ -606,11 +606,11 @@ const SellerProductDetails = () => {
                         </div>
                     )}
 
-                    {/* Save changes CTA — only shown when there is a pending variant */}
+                    {/* Save changes CTA */}
                     {pendingVariant && (
-                        <div className='flex justify-end'>
+                        <div className='flex justify-end pt-2'>
                             <button
-                                className='btn px-8 py-3 cursor-pointer'
+                                className='btn px-6 py-3 text-xs font-semibold cursor-pointer'
                                 onClick={handleSaveChanges}
                             >
                                 Save All Changes

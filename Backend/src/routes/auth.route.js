@@ -1,6 +1,6 @@
 import express from 'express';
 import { validateLoginUser, validateRegisterUser } from '../validators/auth.validator.js';
-import { getMe, googleCallback, login, logout, register } from '../controllers/auth.controller.js';
+import { getMe, googleCallback, login, logout, register, updateProfile } from '../controllers/auth.controller.js';
 import passport from 'passport';
 import { config } from '../config/config.js';
 import { authenticateUser } from '../middlewares/auth.middleware.js';
@@ -33,7 +33,7 @@ authRouter.get('/google',
 authRouter.get('/google/callback', 
     passport.authenticate('google', {
         session:false,
-        failureRedirect:config.NODE_ENV == 'development' ? 'http://localhost:5173/login' : '/login'
+        failureRedirect: process.env.CLIENT_URL ? `${process.env.CLIENT_URL}/login` : (config.NODE_ENV === 'development' ? 'http://localhost:5173/login' : '/login')
     })
     ,googleCallback
 )
@@ -45,6 +45,13 @@ authRouter.get('/google/callback',
  * @access private
  */
 authRouter.get('/get-me', authenticateUser, getMe)
+
+/**
+ * @route /api/auth/profile
+ * @description updates user profile & address details
+ * @access private
+ */
+authRouter.put('/profile', authenticateUser, updateProfile)
 
 
 /**

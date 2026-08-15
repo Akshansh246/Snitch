@@ -1,4 +1,4 @@
-import { addItem, createCartOrder, decrementCartItemApi, getCart, incrementCartItemApi, verifyCartOrder } from "../services/cart.api.js";
+import { addItem, createBuyNowOrder, createCartOrder, decrementCartItemApi, getCart, getOrderTrackingDetails, getUserOrders, incrementCartItemApi, verifyCartOrder } from "../services/cart.api.js";
 import { useDispatch } from "react-redux"
 import { setItems, incrementCartItem, decrementCartItem } from '../state/cart.slice'
 
@@ -33,6 +33,21 @@ export const useCart =  () => {
         return data.order
     }
 
+    async function handleCreateBuyNowOrder({ productId, variantId, size, quantity }) {
+        const data = await createBuyNowOrder({ productId, variantId, size, quantity })
+        return data.order
+    }
+
+    async function handleGetUserOrders() {
+        const data = await getUserOrders()
+        return data.orders || []
+    }
+
+    async function handleGetOrderTrackingDetails(orderId) {
+        const data = await getOrderTrackingDetails(orderId)
+        return data
+    }
+
     async function handleVerifyCartOrder({ razorpay_order_id, razorpay_payment_id, razorpay_signature }) {
         const data = await verifyCartOrder({razorpay_order_id, razorpay_payment_id, razorpay_signature})
         return data.success
@@ -44,6 +59,9 @@ export const useCart =  () => {
         handleIncrementCartItem,
         handleDecrementCartItem,
         handleCreateCartOrder,
+        handleCreateBuyNowOrder,
+        handleGetUserOrders,
+        handleGetOrderTrackingDetails,
         handleVerifyCartOrder
     }
 }

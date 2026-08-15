@@ -10,6 +10,8 @@ import cartRouter from './routes/cart.route.js'
 
 const app = express()
 
+app.set('trust proxy', 1)
+
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
@@ -22,7 +24,7 @@ app.use(passport.initialize())
 passport.use(new GoogleStrategy({
     clientID: config.GOOGLE_CLIENT_ID,
     clientSecret: config.CLIENT_SECRET,
-    callbackURL: '/api/auth/google/callback'
+    callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback'
 }, (accessToken, refreshToken, profile, done)=>{
     return done(null, profile)
 }))

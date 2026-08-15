@@ -44,6 +44,30 @@ export const createCartOrder = async () => {
     return response.data
 }
 
+export const createBuyNowOrder = async ({ productId, variantId, size, quantity }) => {
+    const response = await api.post('/payment/buy-now', {
+        productId,
+        variantId,
+        size,
+        quantity
+    })
+    return response.data
+}
+
+export const getUserOrders = async () => {
+    const response = await api.get('/orders')
+    return response.data
+}
+
+export const getOrderTrackingDetails = async (orderId) => {
+    try {
+        const response = await api.get(`/orders/${orderId}`)
+        return response.data
+    } catch (error) {
+        return { success: false, message: error.response?.data?.message || 'Order tracking not found' }
+    }
+}
+
 export const verifyCartOrder = async ({ razorpay_order_id, razorpay_payment_id, razorpay_signature}) => {
     const response = await api.post('/payment/verify/order',{
         razorpay_order_id, razorpay_payment_id, razorpay_signature

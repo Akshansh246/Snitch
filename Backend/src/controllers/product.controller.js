@@ -47,8 +47,7 @@ export  async function getSellerProducts(req, res) {
 
     const products = await productModel.find({ 
         seller: seller._id,
-    })
-
+    }).sort({ createdAt: -1 })
 
     res.status(200).json({
         message:"Products fetched successfully.",
@@ -63,8 +62,7 @@ export  async function getSellerDrafts(req, res) {
     const products = await productModel.find({ 
         seller: seller._id,
         type:'draft'
-    })
-
+    }).sort({ createdAt: -1 })
 
     res.status(200).json({
         message:"Drafts fetched successfully.",
@@ -74,7 +72,7 @@ export  async function getSellerDrafts(req, res) {
 }
 
 export async function getAllProducts(req, res) {
-    const products = await productModel.find({ type:'published' })
+    const products = await productModel.find({ type:'published' }).sort({ createdAt: -1 })
 
     return res.status(200).json({
         message:"Products fetched successfully.",

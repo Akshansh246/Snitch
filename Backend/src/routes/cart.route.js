@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateUser } from '../middlewares/auth.middleware.js';
 import { validateAddToCart } from '../validators/cart.validator.js';
-import { addToCart, createOrderController, decrementCartItemQuantity, getCart, incrementCartItemQuantity, verifyOrderController } from '../controllers/cart.controller.js';
+import { addToCart, buyNowController, createOrderController, decrementCartItemQuantity, getCart, getOrderDetailsController, getUserOrdersController, incrementCartItemQuantity, verifyOrderController } from '../controllers/cart.controller.js';
 
 const router = express.Router()
 
@@ -9,10 +9,6 @@ const router = express.Router()
  * @route /api/cart/add/:productId/
  * @description add item to cart
  * @access private (users only)
- * @argument productId - ID of the product to add
- * @argument variantId - ID of the variant to add
- * @argument quantity - Quantity of the item to add (optional, default: 1)
- * @argument size - size of the product
  */
 router.post('/add/:productId', authenticateUser, validateAddToCart, addToCart)
 
@@ -43,6 +39,27 @@ router.patch('/quantity/decrement/:productId', authenticateUser, decrementCartIt
  * @access private
  */
 router.post('/payment/create/order', authenticateUser, createOrderController)
+
+/**
+ * @route POST /api/cart/payment/buy-now
+ * @description create direct single item buy now order
+ * @access private
+ */
+router.post('/payment/buy-now', authenticateUser, buyNowController)
+
+/**
+ * @route GET /api/cart/orders
+ * @description get all paid orders for user
+ * @access private
+ */
+router.get('/orders', authenticateUser, getUserOrdersController)
+
+/**
+ * @route GET /api/cart/orders/:orderId
+ * @description get specific order details and shipping tracking status
+ * @access private
+ */
+router.get('/orders/:orderId', authenticateUser, getOrderDetailsController)
 
 /**
  * @route POST /api/cart/payment/verify/order

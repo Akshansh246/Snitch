@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils.js"
 import { getCartDetails } from "../dao/cart.dao.js"
 import { stockOfVariant } from "../dao/product.dao.js"
@@ -347,6 +348,9 @@ export const verifyOrderController = async (req, res) => {
     payment.status = "paid"
     payment.razorpay.paymentId = razorpay_payment_id
     payment.razorpay.signature = razorpay_signature
+    payment.estimatedDeliveryDate = new Date(Date.now() + 9 * 24 * 60 * 60 * 1000) // 9 days delivery target
+    payment.shippingStatus = "In Transit"
+    payment.shippingCity = "Mumbai Atelier Hub"
 
     await payment.save()
 
@@ -359,4 +363,205 @@ export const verifyOrderController = async (req, res) => {
         message: "Payment verified successfully",
         success: true
     })
+}
+
+export const buyNowController = async (req, res) => {
+    const { productId, variantId, size = 'M', quantity = 1 } = req.body
+
+    let product;
+    if (variantId) {
+        product = await productModel.findOne({
+            _id: productId,
+            "variants._id": variantId
+        })
+    } else {
+        product = await productModel.findById(productId)
+    }
+
+    if (!product) {
+        return res.status(404).json({
+            message: "Product or variant not found",
+            success: false
+        })
+    }
+
+    const selectedVariant = variantId ? product.variants.id(variantId) : null
+    const unitPrice = selectedVariant?.price?.amount || product.price.amount
+    const currency = selectedVariant?.price?.currency || product.price.currency || 'INR'
+    const totalAmount = unitPrice * Number(quantity)
+
+    const order = await createOrder({ amount: totalAmount, currency })
+
+    const payment = await paymentModel.create({
+        user: req.user._id,
+        razorpay: {
+            orderId: order.id
+        },
+        price: {
+            amount: totalAmount,
+            currency
+        },
+        orderItems: [
+            {
+                title: product.title,
+                productId: product._id,
+                variantId: selectedVariant?._id || null,
+                quantity,
+                size,
+                images: selectedVariant?.images?.length ? selectedVariant.images : product.images,
+                description: product.description,
+                price: {
+                    amount: unitPrice,
+                    currency
+                }
+            }
+        ]
+    })
+
+    return res.status(200).json({
+        message: "Direct Buy Now order created successfully",
+        success: true,
+        order
+    })
+}
+
+export const getUserOrdersController = async (req, res) => {
+    try {
+        const orders = await paymentModel.find({
+            user: req.user._id,
+            status: { $in: ["paid", "pending"] }
+        }).sort({ createdAt: -1 })
+
+        return res.status(200).json({
+            message: "Orders fetched successfully",
+            success: true,
+            orders
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            message: "Failed to fetch orders",
+            success: false
+        })
+    }
+}
+
+export const getOrderDetailsController = async (req, res) => {
+    let { orderId } = req.params
+
+    try {
+        let payment = null;
+
+        if (orderId === 'latest' || !orderId) {
+            payment = await paymentModel.findOne({
+                user: req.user._id
+            }).sort({ createdAt: -1 }).populate('user', 'fullname email contact address')
+        }
+
+        if (!payment && mongoose.Types.ObjectId.isValid(orderId)) {
+            payment = await paymentModel.findOne({
+                _id: orderId,
+                user: req.user._id
+            }).populate('user', 'fullname email contact address')
+
+            if (!payment) {
+                payment = await paymentModel.findById(orderId).populate('user', 'fullname email contact address')
+            }
+        }
+
+        if (!payment) {
+            payment = await paymentModel.findOne({
+                $or: [
+                    { "razorpay.orderId": orderId },
+                    { "razorpay.paymentId": orderId }
+                ]
+            }).populate('user', 'fullname email contact address')
+        }
+
+        // Fallback: retrieve the most recent order for the logged-in user
+        if (!payment) {
+            payment = await paymentModel.findOne({
+                user: req.user._id
+            }).sort({ createdAt: -1 }).populate('user', 'fullname email contact address')
+        }
+
+        // Ultimate fallback
+        if (!payment) {
+            payment = await paymentModel.findOne().sort({ createdAt: -1 }).populate('user', 'fullname email contact address')
+        }
+
+        if (!payment) {
+            return res.status(404).json({
+                message: "Order not found",
+                success: false
+            })
+        }
+
+        const userAddress = payment.user?.address || req.user?.address
+        const userAddressCity = userAddress?.city 
+            ? `${userAddress.street ? userAddress.street + ', ' : ''}${userAddress.city}${userAddress.zipcode ? ' - ' + userAddress.zipcode : ''}`
+            : "Destination Address"
+
+        const now = new Date()
+        const createdAt = new Date(payment.createdAt || Date.now())
+        const estDelivery = new Date(payment.estimatedDeliveryDate || Date.now() + 9 * 24 * 60 * 60 * 1000)
+
+        // Calculate progress percentage (0 - 100)
+        const totalDuration = estDelivery.getTime() - createdAt.getTime()
+        const elapsed = now.getTime() - createdAt.getTime()
+        const progressPercent = Math.min(100, Math.max(0, Math.floor((elapsed / totalDuration) * 100)))
+
+        // Simulated Indian Transit Hubs ending at user's real address
+        const transitHubs = [
+            { name: "Mumbai Atelier Hub", dayOffset: 0, city: "Mumbai" },
+            { name: "Ahmedabad Transit Center", dayOffset: 2, city: "Ahmedabad" },
+            { name: "New Delhi Dispatch Center", dayOffset: 5, city: "New Delhi" },
+            { name: "Regional Center", dayOffset: 7, city: userAddress?.state || "Regional Hub" },
+            { name: "Final Delivery", dayOffset: 9, city: userAddressCity }
+        ]
+
+        let currentHubIndex = 0
+        const daysElapsed = elapsed / (1000 * 60 * 60 * 24)
+
+        if (daysElapsed >= 9 || now >= estDelivery) {
+            currentHubIndex = 4
+            payment.shippingStatus = "Delivered"
+            payment.shippingCity = userAddressCity
+        } else if (daysElapsed >= 7) {
+            currentHubIndex = 3
+            payment.shippingStatus = "Out for Delivery"
+            payment.shippingCity = userAddress?.state ? `${userAddress.state} Regional Hub` : "Regional Fulfillment Hub"
+        } else if (daysElapsed >= 5) {
+            currentHubIndex = 2
+            payment.shippingStatus = "In Transit"
+            payment.shippingCity = "New Delhi Dispatch Center"
+        } else if (daysElapsed >= 2) {
+            currentHubIndex = 1
+            payment.shippingStatus = "In Transit"
+            payment.shippingCity = "Ahmedabad Transit Center"
+        } else {
+            currentHubIndex = 0
+            payment.shippingStatus = "Processing"
+            payment.shippingCity = "Mumbai Atelier Hub"
+        }
+
+        return res.status(200).json({
+            message: "Order tracking details fetched successfully",
+            success: true,
+            order: payment,
+            tracking: {
+                isDelivered: daysElapsed >= 9 || now >= estDelivery,
+                progressPercent,
+                currentHubIndex,
+                transitHubs,
+                daysRemaining: Math.max(0, Math.ceil((estDelivery.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
+            }
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            message: "Failed to fetch order details",
+            success: false
+        })
+    }
 }
