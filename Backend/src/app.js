@@ -21,11 +21,7 @@ app.use(express.static('public'));
 
 app.use(passport.initialize())
 
-const callbackURL = process.env.GOOGLE_CALLBACK_URL || (
-    process.env.NODE_ENV === 'production' || config.NODE_ENV === 'production'
-        ? 'https://snitch-hs7h.onrender.com/api/auth/google/callback'
-        : '/api/auth/google/callback'
-);
+const callbackURL = 'https://snitch-hs7h.onrender.com/api/auth/google/callback'
 
 passport.use(new GoogleStrategy({
     clientID: config.GOOGLE_CLIENT_ID,
