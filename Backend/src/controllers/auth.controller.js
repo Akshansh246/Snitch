@@ -160,8 +160,7 @@ export const googleCallback = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
-    const redirectUrl = process.env.CLIENT_URL || (config.NODE_ENV === 'development' ? 'http://localhost:5173/' : '/')
-    res.redirect(redirectUrl)
+    res.redirect('/home')
 }
 
 export const getMe = async (req, res) => {
